@@ -1,0 +1,6 @@
+:root {
+  --transition-speed: 150ms;
+  --transition-speed-slow: 400ms;
+  --transition-speed-fast: 100ms;
+  --transition-timing-function: ease-in-out;
+}

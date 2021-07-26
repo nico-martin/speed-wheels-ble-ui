@@ -1,0 +1,80 @@
+{
+  "name": "web-bluetooth-car-ui",
+  "author": "Nico Martin - https://nico.dev",
+  "license": "GPL-3.0+",
+  "version": "1.0.0",
+  "description": "A web-based UI for the WebBluetoothCar",
+  "scripts": {
+    "dev": "npm run serve:dev & npm run build:dev",
+    "prod": "npm run build:prod",
+    "build:dev": "webpack -d --watch",
+    "build:prod": "webpack",
+    "serve:dev": "webpack serve --open"
+  },
+  "dependencies": {
+    "dayjs": "^1.10.6",
+    "es-cookie": "^1.3.2",
+    "google-map-react": "^2.1.10",
+    "idb": "^6.1.2",
+    "jwt-decode": "^3.1.2",
+    "lazysizes": "^5.3.2",
+    "photoswipe": "^4.1.3",
+    "preact": "^10.5.14",
+    "react-hook-form": "^7.10.1",
+    "react-intl": "^5.20.4",
+    "react-router-dom": "^5.2.0",
+    "uuid": "^8.3.2"
+  },
+  "devDependencies": {
+    "@trivago/prettier-plugin-sort-imports": "^2.0.2",
+    "@types/google-map-react": "^1.1.8",
+    "@types/react-router-dom": "^5.1.8",
+    "autoprefixer": "^10.2.6",
+    "clean-webpack-plugin": "^4.0.0-alpha.0",
+    "copy-webpack-plugin": "^9.0.1",
+    "css-loader": "^5.2.6",
+    "dotenv": "^10.0.0",
+    "fs": "0.0.1-security",
+    "html-webpack-plugin": "^5.3.2",
+    "json-loader": "^0.5.7",
+    "mini-css-extract-plugin": "^2.1.0",
+    "path": "^0.12.7",
+    "postcss": "^8.3.5",
+    "postcss-loader": "^6.1.1",
+    "postcss-mixins": "^8.1.0",
+    "postcss-nested": "^5.0.5",
+    "postcss-preset-env": "^6.7.0",
+    "prettier": "^2.3.2",
+    "prettier-stylelint": "^0.4.2",
+    "raw-loader": "^4.0.2",
+    "style-loader": "^3.0.0",
+    "stylelint": "^13.13.1",
+    "stylelint-config-standard": "^22.0.0",
+    "ts-loader": "^9.2.3",
+    "typescript": "^4.3.5",
+    "webpack": "^5.44.0",
+    "webpack-cli": "^4.7.2",
+    "webpack-dev-server": "^3.11.2"
+  },
+  "browserslist": [
+    "ie >= 11",
+    "chrome >= 30",
+    "iOS >= 8",
+    "Android >= 4"
+  ],
+  "prettier": {
+    "singleQuote": true,
+    "trailingComma": "es5",
+    "importOrder": [
+      "^@theme$",
+      "^@common/(.*)$",
+      "^@comp/(.*)$",
+      "^@(.*)$",
+      "^[./]"
+    ]
+  },
+  "alias": {
+    "react": "preact/compat",
+    "react-dom": "preact/compat"
+  }
+}

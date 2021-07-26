@@ -1,0 +1,4 @@
+@define-mixin transition $property: all, $speed: var(--transition-speed),
+  $function: ease-in, $delay: 0ms {
+  transition: $speed $property $function $delay;
+}

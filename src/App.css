@@ -1,0 +1,29 @@
+.root {
+  display: flex;
+  height: 100vh;
+  align-items: center;
+  justify-content: center;
+
+  p {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  button {
+    background-color: var(--c-bluetooth);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    padding: 1em 1.5em 1em 1.5em;
+    border-radius: 0.5em;
+    cursor: pointer;
+    @mixin box-shadow;
+    @mixin transition;
+
+    & + button {
+      margin-left: 1em;
+    }
+  }
+}

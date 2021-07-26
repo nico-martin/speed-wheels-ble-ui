@@ -1,0 +1,22 @@
+.root {
+  background-color: var(--c-bluetooth);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  padding: 1em 1.5em 1em 1em;
+  font-size: var(--fs-large);
+  border-radius: 0.5em;
+  cursor: pointer;
+  @mixin box-shadow;
+  @mixin transition;
+
+  &:hover {
+    transform: translateY(-1%);
+    @mixin box-shadow-hover;
+  }
+}
+
+.icon {
+  margin-right: 0.5em;
+  font-size: 2em;
+}
