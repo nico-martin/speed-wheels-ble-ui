@@ -1,0 +1,44 @@
+.root {
+  width: 80vmin;
+  height: 80vmin;
+  margin-top: -10vmin;
+  position: relative;
+  border: 1px solid var(--c-border-dark);
+  border-radius: 50%;
+
+  &::after,
+  &::before {
+    content: '';
+    display: block;
+    background-color: var(--c-border-light);
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translateY(-50%) translateX(-50%);
+    width: 1px;
+    height: 1px;
+  }
+
+  &::after {
+    height: 100%;
+  }
+
+  &::before {
+    width: 100%;
+  }
+}
+
+.bubble {
+  display: block;
+  width: 6vmin;
+  height: 6vmin;
+  border-radius: 50%;
+  background-color: var(--c-bluetooth);
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  margin-left: -3vmin;
+  margin-top: -3vmin;
+  touch-action: none;
+  z-index: 5;
+}

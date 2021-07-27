@@ -1,0 +1,27 @@
+.root {
+  font-size: var(--fs-small);
+  background-color: var(--c-bkg-light);
+  color: var(--c-p);
+  padding: 0.8em 1.2em 0.8em 1em;
+  border-radius: 0.4rem;
+  border-bottom: 4px solid var(--c-feedback-success);
+  display: flex;
+  align-items: center;
+
+  &.error {
+    border-bottom-color: var(--c-feedback-error);
+
+    .icon {
+      color: var(--c-feedback-error);
+    }
+  }
+}
+
+.icon {
+  font-size: 1.4em;
+  margin-right: 0.8em;
+  color: var(--c-feedback-success);
+}
+
+.content {
+}

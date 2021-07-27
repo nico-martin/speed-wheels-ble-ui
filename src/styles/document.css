@@ -1,27 +1,19 @@
+:root {
+  --app-height: 100%;
+}
+
 body {
   background-color: var(--c-bkg);
 }
 
-html,
-body {
+body,
+html {
+  margin: 0;
+  padding: 0;
   height: 100%;
+  overscroll-behavior: none;
 }
 
-body::-webkit-scrollbar {
-  width: 5px;
-}
-
-body {
-  scrollbar-width: thin;
-  scrollbar-color: var(--c-shadow) transparent;
-}
-
-body::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-body::-webkit-scrollbar-thumb {
-  background-color: var(--c-shadow);
-  border-radius: 3px;
-  border: 3px solid transparent;
+:global(#app) {
+  height: 100%;
 }

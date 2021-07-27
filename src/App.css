@@ -1,29 +1,26 @@
 .root {
   display: flex;
-  height: 100vh;
   align-items: center;
   justify-content: center;
+  height: 100%;
+  position: relative;
+}
 
-  p {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
+.connectionErrorContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 90vw;
+}
 
-  button {
-    background-color: var(--c-bluetooth);
-    color: #fff;
-    display: flex;
-    align-items: center;
-    padding: 1em 1.5em 1em 1.5em;
-    border-radius: 0.5em;
-    cursor: pointer;
-    @mixin box-shadow;
-    @mixin transition;
+.connectionError {
+  margin-bottom: var(--spacing-page);
+  max-width: 600px;
+}
 
-    & + button {
-      margin-left: 1em;
-    }
-  }
+.footer {
+  position: fixed;
+  bottom: var(--spacing);
+  left: var(--spacing);
+  right: var(--spacing);
 }

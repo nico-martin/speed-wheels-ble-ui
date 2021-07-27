@@ -1,0 +1,18 @@
+.root {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  padding: 5vmin;
+}
+
+.left,
+.right {
+  width: 50%;
+}
+
+.stop {
+  position: absolute;
+  bottom: 5vh;
+  left: 50%;
+  transform: translateX(-50%);
+}

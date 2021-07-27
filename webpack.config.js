@@ -13,7 +13,7 @@ require('dotenv').config();
 module.exports = (env, argv) => {
   const dirDist = path.resolve(__dirname, 'dist');
   const dirSrc = path.resolve(__dirname, 'src');
-  const dev = argv.mode !== 'production';
+  const dev = env.WEBPACK_SERVE === true;
 
   let serveHttps = false;
   if (process.env.SSL_KEY && process.env.SSL_CRT && process.env.SSL_PEM) {

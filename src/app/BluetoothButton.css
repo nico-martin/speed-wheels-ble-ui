@@ -3,10 +3,11 @@
   color: #fff;
   display: flex;
   align-items: center;
-  padding: 1em 1.5em 1em 1em;
+  padding: 0.8em 2em 0.8em 1em;
   font-size: var(--fs-large);
   border-radius: 0.5em;
   cursor: pointer;
+  position: relative;
   @mixin box-shadow;
   @mixin transition;
 
@@ -14,9 +15,41 @@
     transform: translateY(-1%);
     @mixin box-shadow-hover;
   }
+
+  &:disabled {
+    opacity: 0.8;
+    cursor: auto;
+    transform: translateY(0);
+    @mixin box-shadow;
+  }
 }
 
 .icon {
   margin-right: 0.5em;
   font-size: 2em;
+}
+
+.loader {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  font-size: 1.5em;
+  opacity: 0;
+  @mixin transition opacity;
+}
+
+.icon,
+.content {
+  @mixin transition opacity;
+}
+
+.isLoading {
+  .loader {
+    opacity: 1;
+  }
+
+  .icon,
+  .content {
+    opacity: 0;
+  }
 }

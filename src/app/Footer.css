@@ -1,0 +1,33 @@
+.root {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: var(--spacing-half);
+  border-top: 1px solid var(--c-border);
+}
+
+.button {
+  font-size: 1.2rem;
+  cursor: pointer;
+  opacity: 0.6;
+  @mixin transition;
+
+  &:hover {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+}
+
+.info {
+  * + * {
+    margin-top: 1rem;
+  }
+
+  * + h2 {
+    margin-top: 1.5rem;
+  }
+
+  a {
+    color: var(--c-bluetooth);
+  }
+}
