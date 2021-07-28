@@ -31,3 +31,8 @@
     color: var(--c-bluetooth);
   }
 }
+
+.version {
+  font-size: var(--fs-small);
+  color: var(--c-border-dark);
+}

@@ -24,3 +24,30 @@
   left: var(--spacing);
   right: var(--spacing);
 }
+
+.powerOff {
+  position: fixed;
+  left: var(--spacing);
+  top: var(--spacing);
+  font-size: 4vmin;
+  width: 4vmin;
+  height: 4vmin;
+  cursor: pointer;
+  opacity: 0.6;
+  @mixin transition;
+
+  &:hover {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+
+  &:disabled {
+    pointer-events: none;
+  }
+}
+
+.powerOffLoader {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+}

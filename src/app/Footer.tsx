@@ -12,6 +12,7 @@ const Footer = ({ className = '' }: { className?: string }) => {
       <button className={cn(styles.button)} onClick={() => setInfos(true)}>
         <Icon icon="mdi/info" />
       </button>
+      <span className={styles.version}>v0.0.6</span>
       <button
         className={cn(styles.button)}
         onClick={() =>

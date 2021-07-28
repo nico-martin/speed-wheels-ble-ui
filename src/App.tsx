@@ -1,7 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Message } from '@theme';
+import { Icon, Loader, Message } from '@theme';
 import cn from '@common/utils/classnames';
+import Queue from '@common/utils/promiseQueue';
 import styles from './App.css';
 import BluetoothButton from './app/BluetoothButton';
 import Footer from './app/Footer';
@@ -10,17 +11,18 @@ import RemoteControl from './app/RemoteControl';
 const encoder = new TextEncoder();
 
 const USE_DEMO_CONTROLS = false;
-
-let leftCmdSent = false;
-let rightCmdSent = false;
-
 const BROWSER_SUPPORT = 'bluetooth' in navigator;
 
+const leftQueue = new Queue();
+const rightQueue = new Queue();
+
 const App = () => {
+  const [bleDevice, setBleDevice] = React.useState<any>(null);
   const [bleCharRight, setBleCharRight] = React.useState<any>(null);
   const [bleCharLeft, setBleCharLeft] = React.useState<any>(null);
   const [buttonLoading, setButtonLoading] = React.useState<boolean>(false);
   const [error, setError] = React.useState<string>('');
+  const [powerOffLoading, setPowerOffLoading] = React.useState<boolean>(false);
 
   const onDisconnected = (event) => {
     const device = event.target;
@@ -39,6 +41,7 @@ const App = () => {
         optionalServices: ['0000fff1-0000-1000-8000-00805f9b34fb'],
       })
       .then((device) => {
+        setBleDevice(device);
         device.addEventListener('gattserverdisconnected', onDisconnected);
         return device.gatt.connect();
       })
@@ -61,23 +64,11 @@ const App = () => {
       .finally(() => setButtonLoading(false));
   };
 
-  const moveLeftWheel = (speed: number) => {
-    //if (!leftCmdSent) {
-    leftCmdSent = true;
-    bleCharLeft.writeValue(encoder.encode(`${speed}`)).finally(() => {
-      leftCmdSent = false;
-    });
-    //}
-  };
+  const moveLeftWheel = (speed: number, important = false) =>
+    leftQueue.add(() => bleCharLeft.writeValue(encoder.encode(`${speed}`)));
 
-  const moveRightWheel = (speed: number) => {
-    //if (!rightCmdSent) {
-    rightCmdSent = true;
-    bleCharRight.writeValue(encoder.encode(`${speed}`)).finally(() => {
-      rightCmdSent = false;
-    });
-    //}
-  };
+  const moveRightWheel = (speed: number, important = false) =>
+    rightQueue.add(() => bleCharRight.writeValue(encoder.encode(`${speed}`)));
 
   return (
     <div className={styles.root}>
@@ -111,14 +102,37 @@ const App = () => {
           )}
         </div>
       ) : (
-        <RemoteControl
-          onCmdLeft={moveLeftWheel}
-          onCmdRight={moveRightWheel}
-          onCmdStop={() => {
-            bleCharLeft.writeValue(encoder.encode('0'));
-            bleCharRight.writeValue(encoder.encode('0'));
-          }}
-        />
+        <React.Fragment>
+          <RemoteControl
+            onCmdLeft={moveLeftWheel}
+            onCmdRight={moveRightWheel}
+            onCmdStop={() => {
+              moveLeftWheel(0);
+              moveRightWheel(0);
+            }}
+          />
+          <button
+            className={styles.powerOff}
+            disabled={powerOffLoading}
+            onClick={() => {
+              setPowerOffLoading(true);
+              moveLeftWheel(0);
+              moveRightWheel(0);
+              // make sure the wheels have stopped!
+              bleDevice &&
+                window.setTimeout(() => {
+                  bleDevice.gatt.disconnect();
+                  setPowerOffLoading(false);
+                }, 2000);
+            }}
+          >
+            {powerOffLoading ? (
+              <Loader className={styles.powerOffLoader} />
+            ) : (
+              <Icon icon="mdi/power" />
+            )}
+          </button>
+        </React.Fragment>
       )}
       <Footer className={cn(styles.footer)} />
     </div>
