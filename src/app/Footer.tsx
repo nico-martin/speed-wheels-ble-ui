@@ -1,6 +1,7 @@
 import React from 'react';
 import { Icon, PortalBox } from '@theme';
 import cn from '@common/utils/classnames';
+import pkg from './../../package.json';
 import styles from './Footer.css';
 
 const Footer = ({ className = '' }: { className?: string }) => {
@@ -12,7 +13,7 @@ const Footer = ({ className = '' }: { className?: string }) => {
       <button className={cn(styles.button)} onClick={() => setInfos(true)}>
         <Icon icon="mdi/info" />
       </button>
-      <span className={styles.version}>v0.0.6</span>
+      <span className={styles.version}>v{pkg.version}</span>
       <button
         className={cn(styles.button)}
         onClick={() =>
