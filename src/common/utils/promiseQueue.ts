@@ -1,42 +1,55 @@
-// todo: https://twitter.com/nic_o_martin/status/1420279703227744258
-// does not work yet
-
 export default class Queue {
-  promisequeue: Array<() => Promise<any>>;
-  nextToExecute: number;
-  nowExecuting: number;
-  executed: number;
+  queue: Record<number, Array<() => Promise<any>>>;
+  inProgress: boolean;
 
   constructor() {
-    this.promisequeue = [];
-    this.nextToExecute = 0;
-    this.executed = 0;
+    this.queue = [];
+    this.inProgress = false;
   }
 
-  add(promise: () => Promise<any>) {
-    this.promisequeue.push(promise);
-    //console.log('add');
-    this.promisequeue.length >= this.executed && this.executeNext();
+  add(promise: () => Promise<any>, emptyQueue: boolean = false) {
+    if (!this.queue) {
+      this.queue = [];
+    }
+
+    const priority = emptyQueue ? 0 : 1;
+    if (!this.queue[priority]) {
+      this.queue[priority] = [];
+    }
+
+    this.queue[priority].push(promise);
+    !this.inProgress && this.executeNext();
   }
 
   executeNext() {
-    if (
-      this.promisequeue[this.nextToExecute] &&
-      this.nextToExecute !== this.nowExecuting
-    ) {
-      this.nowExecuting = this.nextToExecute;
-      this.promisequeue[this.nextToExecute]()
-        .then(() => {
-          //console.log('success', this.nextToExecute);
-        })
-        .catch((e) => {
-          //console.log('error', this.nextToExecute, e);
-        })
-        .finally(() => {
-          this.executed++;
-          this.nextToExecute++;
+    const activeQueue = Math.min.apply(Math, Object.keys(this.queue));
+    const indexToExecute = this.queue[activeQueue].length - 1;
+    this.inProgress = true;
+    this.queue[activeQueue][indexToExecute]()
+      .then((e) => {
+        //console.log('success', e);
+      })
+      .catch((e) => {
+        //console.log('error', this.nextToExecute, e);
+      })
+      .finally(() => {
+        this.queue[activeQueue] = this.queue[activeQueue].slice(
+          indexToExecute + 1
+        );
+
+        if (this.queue[activeQueue].length === 0) {
+          if (activeQueue === 0) {
+            this.queue = [];
+          } else {
+            delete this.queue[activeQueue];
+          }
+        }
+
+        if (Object.keys(this.queue).length !== 0) {
           this.executeNext();
-        });
-    }
+        } else {
+          this.inProgress = false;
+        }
+      });
   }
 }

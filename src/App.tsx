@@ -10,11 +10,13 @@ import RemoteControl from './app/RemoteControl';
 
 const encoder = new TextEncoder();
 
-const USE_DEMO_CONTROLS = false;
+const USE_DEMO_CONTROLS = true;
 const BROWSER_SUPPORT = 'bluetooth' in navigator;
 
 const leftQueue = new Queue();
 const rightQueue = new Queue();
+const mockSend = (speed) =>
+  new Promise((resolve) => setTimeout(() => resolve(speed), 500));
 
 const App = () => {
   const [bleDevice, setBleDevice] = React.useState<any>(null);
@@ -74,9 +76,9 @@ const App = () => {
     <div className={styles.root}>
       {USE_DEMO_CONTROLS ? (
         <RemoteControl
-          onCmdLeft={(speed) => console.log('LEFT', speed)}
-          onCmdRight={(speed) => console.log('RIGHT', speed)}
-          onCmdStop={() => console.log('STOP')}
+          onCmdLeft={(speed) => leftQueue.add(() => mockSend(speed))}
+          onCmdRight={(speed) => {}}
+          onCmdStop={() => leftQueue.add(() => mockSend(0), true)}
           className={styles.remote}
         />
       ) : bleCharRight === null || bleCharLeft === null ? (
