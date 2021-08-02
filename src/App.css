@@ -25,10 +25,16 @@
   right: var(--spacing);
 }
 
-.powerOff {
+.device {
   position: fixed;
   left: var(--spacing);
   top: var(--spacing);
+  display: flex;
+  align-items: center;
+}
+
+.powerOff {
+  position: relative;
   font-size: 4vmin;
   width: 4vmin;
   height: 4vmin;
@@ -50,4 +56,13 @@
   position: absolute;
   left: 50%;
   top: 50%;
+}
+
+.deviceInfo {
+  font-size: 0.9vmin;
+  margin-left: 1vmin;
+
+  p + p {
+    margin-top: 0.2em;
+  }
 }
