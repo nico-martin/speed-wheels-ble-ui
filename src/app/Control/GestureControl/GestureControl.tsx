@@ -2,7 +2,7 @@
 import * as fp from 'fingerpose';
 import React from 'react';
 import Webcam from 'react-webcam';
-import { Icon } from '@theme';
+import { Icon, Loader } from '@theme';
 import useElementSize from '@common/hooks/useElementSize';
 import cn from '@common/utils/classnames';
 import * as handpose from '@tensorflow-models/handpose';
@@ -32,6 +32,10 @@ const GestureControl = ({
   const canvasRef = React.useRef<HTMLCanvasElement>(null);
   const [init, setInit] = React.useState<boolean>(false);
   const [handPose, setHandPose] = React.useState<string>('stop');
+  const [loading, setLoading] = React.useState<boolean>(true);
+  const [videoSources, setVideoSources] = React.useState<
+    Array<MediaDeviceInfo>
+  >([]);
 
   const forward = () => {
     console.log('forward');
@@ -47,14 +51,14 @@ const GestureControl = ({
 
   const left = () => {
     console.log('left');
-    onCmdLeft(0);
-    onCmdRight(50);
+    onCmdLeft(1);
+    onCmdRight(60);
   };
 
   const right = () => {
     console.log('right');
-    onCmdLeft(50);
-    onCmdRight(0);
+    onCmdLeft(60);
+    onCmdRight(1);
   };
 
   const stop = () => {
@@ -77,40 +81,72 @@ const GestureControl = ({
   }, [handPose]);
 
   React.useEffect(() => {
+    navigator.mediaDevices
+      .enumerateDevices()
+      .then((deviceInfos) =>
+        setVideoSources(
+          deviceInfos.filter((device) => device.kind === 'videoinput')
+        )
+      );
+  }, []);
+
+  React.useEffect(() => {
     if (init || !webcamRef.current || artboardSize[0] === 0) {
       return;
     }
 
     setInit(true);
-    initCamera(artboardSize[0], artboardSize[1], 30).then((video) => {
+    startUp();
+  }, [webcamRef, artboardSize]);
+
+  const startUp = (cameraId = '') => {
+    initCamera(cameraId, artboardSize[0], artboardSize[1], 30).then((video) => {
       video.play();
       video.addEventListener('loadeddata', (event) => {
         console.log('Camera is ready');
         main();
       });
     });
-  }, [webcamRef, artboardSize]);
+  };
 
-  const initCamera = async (width, height, fps): Promise<HTMLVideoElement> =>
+  const initCamera = async (
+    cameraId,
+    width,
+    height,
+    fps
+  ): Promise<HTMLVideoElement> =>
     new Promise(async (resolve, reject) => {
-      const constraints = {
+      // @ts-ignore
+      if (window.stream) {
+        // @ts-ignore
+        window.stream.getTracks().forEach((track) => {
+          track.stop();
+        });
+      }
+
+      const constraints: MediaStreamConstraints = {
         audio: false,
         video: {
           facingMode: 'user',
-          //width: width,
+          width: width,
           height: height,
-          aspectRatio: width / height,
           frameRate: { max: fps },
+          deviceId: cameraId,
         },
       };
 
       const video = webcamRef.current;
 
       // get video stream
-      video.srcObject = await navigator.mediaDevices.getUserMedia(constraints);
-      video.onloadedmetadata = () => {
+      navigator.mediaDevices.getUserMedia(constraints).then((stream) => {
+        const videoTracks = stream.getVideoTracks();
+        console.log('Got stream with constraints:', constraints);
+        console.log('Using video device: ' + videoTracks[0].label);
+        // @ts-ignore
+        window.stream = stream;
+        video.srcObject = stream;
         resolve(video);
-      };
+      });
     });
 
   async function main() {
@@ -130,6 +166,7 @@ const GestureControl = ({
     // load handpose model
     const model = await handpose.load();
     console.log('Handpose model loaded');
+    setLoading(false);
 
     // main estimation loop
     const estimateHands = async () => {
@@ -171,7 +208,12 @@ const GestureControl = ({
   return (
     <div className={cn(styles.root, className)}>
       <div className={styles.artboard} ref={artboardRef}>
-        <span className={cn(styles.indicator, styles[`indicator-${handPose}`])}>
+        <span
+          className={cn(styles.indicator, styles[`indicator-${handPose}`], {
+            [styles.indicatorLoading]: loading,
+          })}
+        >
+          <Loader className={styles.loader} />
           <Icon
             icon={handPose === 'stop' ? `mdi/stop` : `mdi/arrow`}
             className={styles.icon}
@@ -190,6 +232,16 @@ const GestureControl = ({
           width={artboardSize[0]}
           height={artboardSize[1]}
         />
+        {videoSources.length !== 0 && (
+          <select
+            className={styles.videoSelect}
+            onChange={(e) => startUp((e.target as HTMLSelectElement).value)}
+          >
+            {videoSources.map((source) => (
+              <option value={source.deviceId}>{source.label}</option>
+            ))}
+          </select>
+        )}
       </div>
     </div>
   );

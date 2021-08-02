@@ -16,24 +16,23 @@ const BROWSER_SUPPORT = 'bluetooth' in navigator;
 
 const BLE_UUID = {
   SERVICE_MOTOR: '0000fff1-0000-1000-8000-00805f9b34fb',
-  CHARACTERISTIC_MOTOR_LEFT: '0000fff2-0000-1000-8000-00805f9b34fb',
-  CHARACTERISTIC_MOTOR_RIGHT: '0000fff4-0000-1000-8000-00805f9b34fb',
+  CHARACTERISTIC_MOTOR: '0000fff2-0000-1000-8000-00805f9b34fb',
   SERVICE_DEVICE: '0000ff01-0000-1000-8000-00805f9b34fb',
   CHARACTERISTIC_VERSION: '0000ff02-0000-1000-8000-00805f9b34fb',
   CHARACTERISTIC_SERIAL: '0000ff04-0000-1000-8000-00805f9b34fb',
 };
 
-const leftQueue = new Queue();
-const rightQueue = new Queue();
-const mockSend = (speed, dir = '') => {
-  console.log(dir, speed);
-  return new Promise((resolve) => setTimeout(() => resolve(speed), 100));
+const queue = new Queue();
+const mockSend = (leftSpeed, rightSpeed) => {
+  console.log(leftSpeed, rightSpeed);
+  return new Promise((resolve) =>
+    setTimeout(() => resolve({ leftSpeed, rightSpeed }), 100)
+  );
 };
 
 const App = () => {
   const [bleDevice, setBleDevice] = React.useState<any>(null);
-  const [bleCharRight, setBleCharRight] = React.useState<any>(null);
-  const [bleCharLeft, setBleCharLeft] = React.useState<any>(null);
+  const [bleCharMotor, setBleCharMotor] = React.useState<any>(null);
   const [carSoftwareVersion, setCarSoftwareVersion] =
     React.useState<string>('');
   const [carSerial, setCarSerial] = React.useState<string>('');
@@ -44,8 +43,7 @@ const App = () => {
   const onDisconnected = (event) => {
     const device = event.target;
     console.log(`Device ${device.name} is disconnected.`);
-    setBleCharRight(null);
-    setBleCharLeft(null);
+    setBleCharMotor(null);
   };
 
   const connect = () => {
@@ -70,15 +68,13 @@ const App = () => {
       )
       .then(([serviceMotor, serviceDevice]) =>
         Promise.all([
-          serviceMotor.getCharacteristic(BLE_UUID.CHARACTERISTIC_MOTOR_LEFT),
-          serviceMotor.getCharacteristic(BLE_UUID.CHARACTERISTIC_MOTOR_RIGHT),
+          serviceMotor.getCharacteristic(BLE_UUID.CHARACTERISTIC_MOTOR),
           serviceDevice.getCharacteristic(BLE_UUID.CHARACTERISTIC_VERSION),
           serviceDevice.getCharacteristic(BLE_UUID.CHARACTERISTIC_SERIAL),
         ])
       )
-      .then(([charLeft, charRight, charVersion, charSerial]) => {
-        setBleCharRight(charRight);
-        setBleCharLeft(charLeft);
+      .then(([charMotor, charVersion, charSerial]) => {
+        setBleCharMotor(charMotor);
         charVersion
           .readValue()
           .then((e) => setCarSoftwareVersion(decoder.decode(e)));
@@ -90,25 +86,35 @@ const App = () => {
       .finally(() => setButtonLoading(false));
   };
 
-  const moveLeftWheel = (speed: number, important = false) =>
-    leftQueue.add(() => bleCharLeft.writeValue(encoder.encode(`${speed}`)));
-
-  const moveRightWheel = (speed: number, important = false) =>
-    rightQueue.add(() => bleCharRight.writeValue(encoder.encode(`${speed}`)));
+  const moveWheels = (
+    leftSpeed: number,
+    rightSpeed: number,
+    important = false
+  ) =>
+    queue.add(
+      () =>
+        bleCharMotor.writeValue(
+          encoder.encode(
+            JSON.stringify({
+              left: leftSpeed,
+              right: rightSpeed,
+            })
+          )
+        ),
+      important
+    );
 
   return (
     <div className={styles.root}>
       {USE_DEMO_CONTROLS ? (
         <RemoteControl
-          onCmdLeft={(speed) => leftQueue.add(() => mockSend(speed, 'left'))}
-          onCmdRight={(speed) => rightQueue.add(() => mockSend(speed, 'right'))}
+          onCmd={(left, right) => queue.add(() => mockSend(left, right))}
           onCmdStop={() => {
-            leftQueue.add(() => mockSend(0, 'left'), true);
-            rightQueue.add(() => mockSend(0, 'right'), true);
+            queue.add(() => mockSend(0, 0), true);
           }}
           className={styles.remote}
         />
-      ) : bleCharRight === null || bleCharLeft === null ? (
+      ) : bleCharMotor === null ? (
         <div className={styles.connectionErrorContainer}>
           {error !== '' && (
             <Message type="error" className={styles.connectionError}>
@@ -133,12 +139,8 @@ const App = () => {
       ) : (
         <React.Fragment>
           <RemoteControl
-            onCmdLeft={moveLeftWheel}
-            onCmdRight={moveRightWheel}
-            onCmdStop={() => {
-              moveLeftWheel(0);
-              moveRightWheel(0);
-            }}
+            onCmd={(left, right) => moveWheels(left, right)}
+            onCmdStop={() => moveWheels(0, 0, true)}
           />
           <div className={styles.device}>
             <button
@@ -146,8 +148,7 @@ const App = () => {
               disabled={powerOffLoading}
               onClick={() => {
                 setPowerOffLoading(true);
-                moveLeftWheel(0);
-                moveRightWheel(0);
+                queue.add(() => mockSend(0, 0));
                 // make sure the wheels have stopped!
                 bleDevice &&
                   window.setTimeout(() => {

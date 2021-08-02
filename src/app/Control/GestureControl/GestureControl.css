@@ -20,6 +20,29 @@
   transform: scaleX(-1);
 }
 
+.loader {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  opacity: 0;
+  transition: opacity 200ms;
+}
+
+.icon {
+  opacity: 1;
+  transition: opacity 200ms;
+}
+
+.indicatorLoading {
+  .icon {
+    opacity: 0;
+  }
+
+  .loader {
+    opacity: 1;
+  }
+}
+
 .canvas {
 }
 
@@ -58,4 +81,12 @@
 
 .indicator-start .icon {
   transform: rotate(-90deg);
+}
+
+.videoSelect {
+  font-size: 0.8rem;
+  z-index: 999;
+  position: absolute;
+  bottom: 1rem;
+  left: 1rem;
 }

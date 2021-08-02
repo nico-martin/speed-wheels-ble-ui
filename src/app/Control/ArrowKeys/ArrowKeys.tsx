@@ -15,23 +15,23 @@ const ArrowKeys = ({
   className?: string;
 }) => {
   const forward = () => {
-    onCmdRight(70);
     onCmdLeft(70);
+    onCmdRight(70);
   };
 
   const backward = () => {
-    onCmdRight(-50);
     onCmdLeft(-50);
+    onCmdRight(-50);
   };
 
   const left = () => {
-    //onCmdLeft(20);
+    onCmdLeft(1);
     onCmdRight(50);
   };
 
   const right = () => {
     onCmdLeft(50);
-    //onCmdRight(20);
+    onCmdRight(1);
   };
 
   const stop = () => onCmdStop();
