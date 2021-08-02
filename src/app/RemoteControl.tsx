@@ -1,4 +1,5 @@
 import React from 'react';
+import ArrowKeys from './Control/ArrowKeys/ArrowKeys';
 import Circle from './Control/Circle/Circle';
 import LeftRightDrag from './Control/LeftRightDrag/LeftRightDrag';
 
@@ -13,7 +14,7 @@ const RemoteControl = ({
   onCmdStop: () => void;
   className?: string;
 }) => (
-  <Circle
+  <ArrowKeys
     onCmdLeft={onCmdLeft}
     onCmdRight={onCmdRight}
     onCmdStop={onCmdStop}

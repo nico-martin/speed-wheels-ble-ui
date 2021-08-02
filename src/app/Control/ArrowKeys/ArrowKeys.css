@@ -1,0 +1,54 @@
+.root {
+}
+
+.buttons {
+  display: grid;
+  grid-gap: 1em;
+  grid-template-areas:
+    '.    up    .'
+    'left .     right'
+    '.    down  .';
+}
+
+.button {
+  background-color: var(--c-bluetooth);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5em 1em;
+  border-radius: 0.3em;
+  font-size: 1.5rem;
+}
+
+.arrowUp {
+  grid-area: up;
+
+  .icon {
+    transform: rotate(-90deg);
+  }
+}
+
+.arrowLeft {
+  grid-area: left;
+
+  .icon {
+    transform: rotate(180deg);
+  }
+}
+
+.arrowRight {
+  grid-area: right;
+
+  .icon {
+    transform: rotate(0deg);
+  }
+}
+
+.arrowDown {
+  grid-area: down;
+
+  .icon {
+    transform: rotate(90deg);
+  }
+}
