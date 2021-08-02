@@ -1,6 +1,7 @@
 import React from 'react';
 import ArrowKeys from './Control/ArrowKeys/ArrowKeys';
 import Circle from './Control/Circle/Circle';
+import GestureControl from './Control/GestureControl/GestureControl';
 import LeftRightDrag from './Control/LeftRightDrag/LeftRightDrag';
 
 const RemoteControl = ({
@@ -14,7 +15,7 @@ const RemoteControl = ({
   onCmdStop: () => void;
   className?: string;
 }) => (
-  <ArrowKeys
+  <GestureControl
     onCmdLeft={onCmdLeft}
     onCmdRight={onCmdRight}
     onCmdStop={onCmdStop}

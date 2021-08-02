@@ -1,0 +1,61 @@
+.root {
+  position: relative;
+}
+
+.artboard {
+  width: 90vw;
+  height: 90vh;
+}
+
+.canvas,
+.video {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  top: 0;
+}
+
+.video {
+  transform: scaleX(-1);
+}
+
+.canvas {
+}
+
+.indicator {
+  z-index: 999;
+  position: absolute;
+  top: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #fff;
+  background-color: var(--c-bluetooth);
+  font-size: 1.5rem;
+  height: 2em;
+  width: 2em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.3em;
+}
+
+.indicator-stop .icon {
+  transform: rotate(0deg);
+}
+
+.indicator-left .icon {
+  transform: rotate(180deg);
+}
+
+.indicator-right .icon {
+  transform: rotate(0deg);
+}
+
+.indicator-back .icon {
+  transform: rotate(90deg);
+}
+
+.indicator-start .icon {
+  transform: rotate(-90deg);
+}
