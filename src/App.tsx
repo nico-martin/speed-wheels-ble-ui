@@ -11,15 +11,16 @@ import RemoteControl from './app/RemoteControl';
 const encoder = new TextEncoder();
 const decoder = new TextDecoder();
 
-const USE_DEMO_CONTROLS = false;
+const USE_DEMO_CONTROLS = true;
 const BROWSER_SUPPORT = 'bluetooth' in navigator;
 
 const BLE_UUID = {
   SERVICE_MOTOR: '0000fff1-0000-1000-8000-00805f9b34fb',
-  CHARACTERISTIC_MOTOR: '0000fff2-0000-1000-8000-00805f9b34fb',
-  SERVICE_DEVICE: '0000ff01-0000-1000-8000-00805f9b34fb',
-  CHARACTERISTIC_VERSION: '0000ff02-0000-1000-8000-00805f9b34fb',
-  CHARACTERISTIC_SERIAL: '0000ff04-0000-1000-8000-00805f9b34fb',
+  CHAR_MOTOR: '0000fff2-0000-1000-8000-00805f9b34fb',
+  SERVICE_DEVICE: '0000180a-0000-1000-8000-00805f9b34fb',
+  CHAR_MANUFACRURER: '00002a29-0000-1000-8000-00805f9b34fb',
+  CHAR_SOFTWARE_REVISION: '00002a28-0000-1000-8000-00805f9b34fb',
+  CHAR_MODEL_NUMBER: '00002a24-0000-1000-8000-00805f9b34fb',
 };
 
 const queue = new Queue();
@@ -35,7 +36,7 @@ const App = () => {
   const [bleCharMotor, setBleCharMotor] = React.useState<any>(null);
   const [carSoftwareVersion, setCarSoftwareVersion] =
     React.useState<string>('');
-  const [carSerial, setCarSerial] = React.useState<string>('');
+  const [carModel, setCarModel] = React.useState<string>('');
   const [buttonLoading, setButtonLoading] = React.useState<boolean>(false);
   const [error, setError] = React.useState<string>('');
   const [powerOffLoading, setPowerOffLoading] = React.useState<boolean>(false);
@@ -53,7 +54,7 @@ const App = () => {
       .requestDevice({
         //acceptAllDevices: true,
         filters: [{ name: 'WebBluetoothCar' }],
-        optionalServices: [BLE_UUID.SERVICE_DEVICE, BLE_UUID.SERVICE_MOTOR],
+        optionalServices: [BLE_UUID.SERVICE_MOTOR],
       })
       .then((device) => {
         setBleDevice(device);
@@ -68,17 +69,17 @@ const App = () => {
       )
       .then(([serviceMotor, serviceDevice]) =>
         Promise.all([
-          serviceMotor.getCharacteristic(BLE_UUID.CHARACTERISTIC_MOTOR),
-          serviceDevice.getCharacteristic(BLE_UUID.CHARACTERISTIC_VERSION),
-          serviceDevice.getCharacteristic(BLE_UUID.CHARACTERISTIC_SERIAL),
+          serviceMotor.getCharacteristic(BLE_UUID.CHAR_MOTOR),
+          serviceDevice.getCharacteristic(BLE_UUID.CHAR_SOFTWARE_REVISION),
+          serviceDevice.getCharacteristic(BLE_UUID.CHAR_MODEL_NUMBER),
         ])
       )
-      .then(([charMotor, charVersion, charSerial]) => {
+      .then(([charMotor, charVersion, charModel]) => {
         setBleCharMotor(charMotor);
         charVersion
           .readValue()
           .then((e) => setCarSoftwareVersion(decoder.decode(e)));
-        charSerial.readValue().then((e) => setCarSerial(decoder.decode(e)));
+        charModel.readValue().then((e) => setCarModel(decoder.decode(e)));
       })
       .catch((error) => {
         setError(error.toString());
@@ -167,7 +168,7 @@ const App = () => {
               <p>
                 <b>Device Info</b>
               </p>
-              <p>Car: {carSerial}</p>
+              <p>Car: {carModel}</p>
               <p>Software Version: {carSoftwareVersion}</p>
             </div>
           </div>

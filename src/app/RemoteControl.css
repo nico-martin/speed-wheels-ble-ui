@@ -1,0 +1,34 @@
+.controls {
+  position: fixed;
+  top: 50%;
+  right: var(--spacing);
+  display: flex;
+  flex-direction: column;
+  transform: translateY(-50%);
+  align-items: flex-end;
+}
+
+.button {
+  border: 1px solid var(--c-border-dark);
+  background-color: var(--c-bkg);
+  color: var(--c-border-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5em;
+  border-radius: 0.3em;
+  cursor: pointer;
+
+  & + .button {
+    margin-top: var(--spacing-half);
+  }
+}
+
+.buttonActive {
+  background-color: var(--c-bluetooth);
+  border-color: var(--c-bluetooth);
+  color: #fff;
+}
+
+.buttonIcon {
+}

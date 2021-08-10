@@ -1,7 +1,6 @@
 // @ts-ignore
 import * as fp from 'fingerpose';
 import React from 'react';
-import Webcam from 'react-webcam';
 import { Icon, Loader } from '@theme';
 import useElementSize from '@common/hooks/useElementSize';
 import cn from '@common/utils/classnames';
@@ -14,6 +13,8 @@ import LeftGesture from './Gestures/Left';
 import RightGesture from './Gestures/Right';
 import StartGesture from './Gestures/Start';
 import StopGesture from './Gestures/Stop';
+
+let stream = null;
 
 const GestureControl = ({
   onCmdLeft,
@@ -38,31 +39,26 @@ const GestureControl = ({
   >([]);
 
   const forward = () => {
-    console.log('forward');
     onCmdRight(70);
     onCmdLeft(70);
   };
 
   const backward = () => {
-    console.log('backward');
     onCmdRight(-50);
     onCmdLeft(-50);
   };
 
   const left = () => {
-    console.log('left');
     onCmdLeft(1);
     onCmdRight(60);
   };
 
   const right = () => {
-    console.log('right');
     onCmdLeft(60);
     onCmdRight(1);
   };
 
   const stop = () => {
-    console.log('stop');
     onCmdStop();
   };
 
@@ -88,6 +84,10 @@ const GestureControl = ({
           deviceInfos.filter((device) => device.kind === 'videoinput')
         )
       );
+
+    return () => {
+      stream && stream.getTracks().forEach((track) => track.stop());
+    };
   }, []);
 
   React.useEffect(() => {
@@ -116,13 +116,7 @@ const GestureControl = ({
     fps
   ): Promise<HTMLVideoElement> =>
     new Promise(async (resolve, reject) => {
-      // @ts-ignore
-      if (window.stream) {
-        // @ts-ignore
-        window.stream.getTracks().forEach((track) => {
-          track.stop();
-        });
-      }
+      stream && stream.getTracks().forEach((track) => track.stop());
 
       const constraints: MediaStreamConstraints = {
         audio: false,
@@ -138,13 +132,9 @@ const GestureControl = ({
       const video = webcamRef.current;
 
       // get video stream
-      navigator.mediaDevices.getUserMedia(constraints).then((stream) => {
-        const videoTracks = stream.getVideoTracks();
-        console.log('Got stream with constraints:', constraints);
-        console.log('Using video device: ' + videoTracks[0].label);
-        // @ts-ignore
-        window.stream = stream;
-        video.srcObject = stream;
+      navigator.mediaDevices.getUserMedia(constraints).then((mediaStream) => {
+        stream = mediaStream;
+        video.srcObject = mediaStream;
         resolve(video);
       });
     });
