@@ -11,7 +11,7 @@ import RemoteControl from './app/RemoteControl';
 const encoder = new TextEncoder();
 const decoder = new TextDecoder();
 
-const USE_DEMO_CONTROLS = true;
+const USE_DEMO_CONTROLS = false;
 const BROWSER_SUPPORT = 'bluetooth' in navigator;
 
 const BLE_UUID = {
@@ -54,7 +54,7 @@ const App = () => {
       .requestDevice({
         //acceptAllDevices: true,
         filters: [{ name: 'WebBluetoothCar' }],
-        optionalServices: [BLE_UUID.SERVICE_MOTOR],
+        optionalServices: [BLE_UUID.SERVICE_MOTOR, BLE_UUID.SERVICE_DEVICE],
       })
       .then((device) => {
         setBleDevice(device);

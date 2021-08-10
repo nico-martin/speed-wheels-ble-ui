@@ -14,6 +14,8 @@ const CONTROLS = {
   hand: GestureControl,
 };
 
+const START_CONTROLS = 1;
+
 const RemoteControl = ({
   onCmd,
   onCmdStop,
@@ -26,13 +28,42 @@ const RemoteControl = ({
   const [leftSpeed, setLeftSpeed] = React.useState<number>(0);
   const [rightSpeed, setRightSpeed] = React.useState<number>(0);
   const [activeControl, setActiveControl] = React.useState<string>(
-    Object.keys(CONTROLS)[0]
+    Object.keys(CONTROLS)[START_CONTROLS]
   );
 
   React.useEffect(() => {
-    leftSpeed === 0 && rightSpeed === 0
-      ? onCmdStop()
-      : onCmd(leftSpeed, rightSpeed);
+    if (leftSpeed === 0 && rightSpeed === 0) {
+      onCmdStop();
+    }
+
+    /**
+     * somehow the wheels need a minimum speed so both wheels are spinning.
+     * otherwise one wheel might not spin when it should while the other is 0
+     * thats why either both are 0 (stop) or both have a minimum speed.
+     */
+
+    let sendLeftSpeed = leftSpeed;
+    let sendRightSpeed = rightSpeed;
+    const minSpeedPos = 10;
+    const minSpeedNeg = minSpeedPos * -1;
+
+    if (
+      rightSpeed !== 0 &&
+      leftSpeed >= minSpeedNeg &&
+      leftSpeed <= minSpeedPos
+    ) {
+      sendLeftSpeed = leftSpeed >= 0 ? minSpeedPos : minSpeedNeg;
+    }
+
+    if (
+      leftSpeed !== 0 &&
+      rightSpeed >= minSpeedNeg &&
+      rightSpeed <= minSpeedPos
+    ) {
+      sendRightSpeed = rightSpeed >= 0 ? minSpeedPos : minSpeedNeg;
+    }
+
+    onCmd(sendLeftSpeed, sendRightSpeed);
   }, [leftSpeed, rightSpeed]);
 
   const ControlComponent = React.useMemo(

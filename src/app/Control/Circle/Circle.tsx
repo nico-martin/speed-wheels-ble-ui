@@ -39,12 +39,17 @@ const Circle = ({
       Math.round((100 / (circle.height / 2)) * bubblePosition.y) * -1 || 0;
 
     const adjustment = (relativeY / 100) * relativeX;
+    const slowdown = 40;
 
     return {
       left:
-        Math.round(relativeX <= 0 ? relativeY + adjustment : relativeY) || 0,
+        Math.round(
+          (relativeX <= 0 ? relativeY + adjustment : relativeY) / slowdown
+        ) * slowdown || 0,
       right:
-        Math.round(relativeX >= 0 ? relativeY - adjustment : relativeY) || 0,
+        Math.round(
+          (relativeX >= 0 ? relativeY - adjustment : relativeY) / slowdown
+        ) * slowdown || 0,
     };
   }, [bubblePosition]);
 
@@ -52,8 +57,20 @@ const Circle = ({
     if (wheelSpeed.left === 0 && wheelSpeed.right === 0) {
       onCmdStop();
     } else {
-      onCmdLeft(wheelSpeed.left);
-      onCmdRight(wheelSpeed.right);
+      onCmdLeft(
+        wheelSpeed.left <= -100
+          ? -100
+          : wheelSpeed.left >= 100
+          ? 100
+          : wheelSpeed.left
+      );
+      onCmdRight(
+        wheelSpeed.right <= -100
+          ? -100
+          : wheelSpeed.right >= 100
+          ? 100
+          : wheelSpeed.right
+      );
     }
   }, [wheelSpeed]);
 
