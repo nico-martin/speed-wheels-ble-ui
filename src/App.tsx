@@ -11,7 +11,7 @@ import RemoteControl from './app/RemoteControl';
 const encoder = new TextEncoder();
 const decoder = new TextDecoder();
 
-const USE_DEMO_CONTROLS = false;
+const USE_DEMO_CONTROLS = true;
 const BROWSER_SUPPORT = 'bluetooth' in navigator;
 
 const BLE_UUID = {
@@ -24,12 +24,10 @@ const BLE_UUID = {
 };
 
 const queue = new Queue();
-const mockSend = (leftSpeed, rightSpeed) => {
-  console.log(leftSpeed, rightSpeed);
-  return new Promise((resolve) =>
+const mockSend = (leftSpeed, rightSpeed) =>
+  new Promise((resolve) =>
     setTimeout(() => resolve({ leftSpeed, rightSpeed }), 100)
   );
-};
 
 const App = () => {
   const [bleDevice, setBleDevice] = React.useState<any>(null);

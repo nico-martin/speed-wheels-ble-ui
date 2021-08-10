@@ -1,15 +1,14 @@
 .controls {
   position: fixed;
-  top: 50%;
   right: var(--spacing);
+  top: var(--spacing);
   display: flex;
   flex-direction: column;
-  transform: translateY(-50%);
   align-items: flex-end;
 }
 
 .button {
-  border: 1px solid var(--c-border-dark);
+  border: 1px solid var(--c-border-light);
   background-color: var(--c-bkg);
   color: var(--c-border-dark);
   display: flex;
@@ -18,6 +17,7 @@
   padding: 0.5em;
   border-radius: 0.3em;
   cursor: pointer;
+  font-size: 1.8vmin;
 
   & + .button {
     margin-top: var(--spacing-half);
