@@ -1,0 +1,58 @@
+.root {
+  width: 80vmin;
+  height: 80vmin;
+  position: relative;
+
+  &::before {
+    content: '';
+    display: block;
+    border: 4px solid var(--c-border-light);
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translateY(-50%) translateX(-50%);
+    width: 9vmin;
+    height: 9vmin;
+    border-radius: 50%;
+  }
+}
+
+.bubble {
+  display: block;
+  width: 6vmin;
+  height: 6vmin;
+  border-radius: 50%;
+  background-color: var(--c-bluetooth);
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  margin-left: -3vmin;
+  margin-bottom: -3vmin;
+  touch-action: none;
+  z-index: 5;
+}
+
+.intro {
+  position: fixed;
+  left: 50%;
+  top: 25%;
+  transform: translateY(-50%) translateX(-50%);
+  transition: opacity 200ms ease-in-out;
+  will-change: opacity;
+  width: 50%;
+  text-align: center;
+  color: var(--c-border-dark);
+  font-size: 0.8rem;
+  line-height: 1.5;
+}
+
+.introHidden {
+  opacity: 0;
+}
+
+.introSeconds {
+  display: block;
+  margin-top: 0.5rem;
+  font-size: 2rem;
+  font-weight: bold;
+}

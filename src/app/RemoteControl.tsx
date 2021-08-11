@@ -5,16 +5,17 @@ import ArrowKeys from './Control/ArrowKeys/ArrowKeys';
 import Circle from './Control/Circle/Circle';
 import GestureControl from './Control/GestureControl/GestureControl';
 import LeftRightDrag from './Control/LeftRightDrag/LeftRightDrag';
+import Rotate from './Control/Rotate/Rotate';
 import styles from './RemoteControl.css';
 
 const CONTROLS = {
   arrows: ArrowKeys,
   movingpoint: Circle,
-  rotate: Circle,
+  rotate: Rotate,
   hand: GestureControl,
 };
 
-const START_CONTROLS = 1;
+const START_CONTROLS = 2;
 
 const RemoteControl = ({
   onCmd,
@@ -66,10 +67,10 @@ const RemoteControl = ({
     onCmd(sendLeftSpeed, sendRightSpeed);
   }, [leftSpeed, rightSpeed]);
 
-  const ControlComponent = React.useMemo(
-    () => CONTROLS[activeControl],
-    [activeControl]
-  );
+  const ControlComponent = React.useMemo(() => {
+    onCmdStop();
+    return CONTROLS[activeControl];
+  }, [activeControl]);
 
   return (
     <React.Fragment>

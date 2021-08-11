@@ -17,7 +17,7 @@
   padding: 0.5em;
   border-radius: 0.3em;
   cursor: pointer;
-  font-size: 1.8vmin;
+  font-size: 2vmin;
 
   & + .button {
     margin-top: var(--spacing-half);
