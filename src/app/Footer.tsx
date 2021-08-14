@@ -13,7 +13,15 @@ const Footer = ({ className = '' }: { className?: string }) => {
       <button className={cn(styles.button)} onClick={() => setInfos(true)}>
         <Icon icon="mdi/info" />
       </button>
-      <span className={styles.version}>v{pkg.version}</span>
+      <span className={styles.version}>
+        <a
+          href="https://github.com/nico-martin/WebBluetoothCarUI"
+          target="_blank"
+        >
+          WebBluetoothCarUI
+        </a>{' '}
+        v{pkg.version}
+      </span>{' '}
       <button
         className={cn(styles.button)}
         onClick={() =>

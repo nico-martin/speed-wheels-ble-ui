@@ -4,8 +4,8 @@ import cn from '@common/utils/classnames';
 import ArrowKeys from './Control/ArrowKeys/ArrowKeys';
 import Circle from './Control/Circle/Circle';
 import GestureControl from './Control/GestureControl/GestureControl';
-import LeftRightDrag from './Control/LeftRightDrag/LeftRightDrag';
 import Rotate from './Control/Rotate/Rotate';
+import LightControl from './LightControl';
 import styles from './RemoteControl.css';
 
 const CONTROLS = {
@@ -15,7 +15,7 @@ const CONTROLS = {
   hand: GestureControl,
 };
 
-const START_CONTROLS = 2;
+const START_CONTROLS = 0;
 
 const RemoteControl = ({
   onCmd,
@@ -94,6 +94,16 @@ const RemoteControl = ({
             <Icon icon={`mdi/${controlKey}`} className={styles.buttonIcon} />
           </button>
         ))}
+        <LightControl
+          className={styles.lightControl}
+          direction={
+            leftSpeed === 0 && rightSpeed === 0
+              ? 'STOP'
+              : leftSpeed >= 0 && rightSpeed >= 0
+              ? 'FORWARD'
+              : 'BACKWARD'
+          }
+        />
       </div>
     </React.Fragment>
   );

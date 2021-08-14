@@ -2,26 +2,19 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Icon, Loader, Message } from '@theme';
 import cn from '@common/utils/classnames';
+import { BLE_UUID } from '@common/utils/constants';
 import Queue from '@common/utils/promiseQueue';
 import styles from './App.css';
 import BluetoothButton from './app/BluetoothButton';
+import CarModel from './app/Control/Car/CarModel';
+import CarSoftwareRevision from './app/Control/Car/CarSoftwareRevision';
 import Footer from './app/Footer';
 import RemoteControl from './app/RemoteControl';
 
 const encoder = new TextEncoder();
-const decoder = new TextDecoder();
 
 const USE_DEMO_CONTROLS = false;
 const BROWSER_SUPPORT = 'bluetooth' in navigator;
-
-const BLE_UUID = {
-  SERVICE_MOTOR: '0000fff1-0000-1000-8000-00805f9b34fb',
-  CHAR_MOTOR: '0000fff2-0000-1000-8000-00805f9b34fb',
-  SERVICE_DEVICE: '0000180a-0000-1000-8000-00805f9b34fb',
-  CHAR_MANUFACRURER: '00002a29-0000-1000-8000-00805f9b34fb',
-  CHAR_SOFTWARE_REVISION: '00002a28-0000-1000-8000-00805f9b34fb',
-  CHAR_MODEL_NUMBER: '00002a24-0000-1000-8000-00805f9b34fb',
-};
 
 const queue = new Queue();
 const mockSend = (leftSpeed, rightSpeed) => {
@@ -32,11 +25,14 @@ const mockSend = (leftSpeed, rightSpeed) => {
 };
 
 const App = () => {
-  const [bleDevice, setBleDevice] = React.useState<any>(null);
-  const [bleCharMotor, setBleCharMotor] = React.useState<any>(null);
-  const [carSoftwareVersion, setCarSoftwareVersion] =
-    React.useState<string>('');
-  const [carModel, setCarModel] = React.useState<string>('');
+  const [bleDevice, setBleDevice] = React.useState<BluetoothDevice>(null);
+  const [bleCharMotor, setBleCharMotor] =
+    React.useState<BluetoothRemoteGATTCharacteristic>(null);
+  const [bleCharSoftwareVersion, setBleCharSoftwareVersion] =
+    React.useState<BluetoothRemoteGATTCharacteristic>(null);
+  const [bleCharModel, setBleCharModel] =
+    React.useState<BluetoothRemoteGATTCharacteristic>(null);
+
   const [buttonLoading, setButtonLoading] = React.useState<boolean>(false);
   const [error, setError] = React.useState<string>('');
   const [powerOffLoading, setPowerOffLoading] = React.useState<boolean>(false);
@@ -47,44 +43,38 @@ const App = () => {
     setBleCharMotor(null);
   };
 
-  const connect = () => {
+  const connect = async () => {
     setButtonLoading(true);
-    //@ts-ignore
-    navigator.bluetooth
-      .requestDevice({
+    try {
+      const device = await navigator.bluetooth.requestDevice({
         //acceptAllDevices: true,
         filters: [{ name: 'WebBluetoothCar' }],
         optionalServices: [BLE_UUID.SERVICE_MOTOR, BLE_UUID.SERVICE_DEVICE],
-      })
-      .then((device) => {
-        setBleDevice(device);
-        device.addEventListener('gattserverdisconnected', onDisconnected);
-        return device.gatt.connect();
-      })
-      .then((server) =>
-        Promise.all([
-          server.getPrimaryService(BLE_UUID.SERVICE_MOTOR),
-          server.getPrimaryService(BLE_UUID.SERVICE_DEVICE),
-        ])
-      )
-      .then(([serviceMotor, serviceDevice]) =>
-        Promise.all([
-          serviceMotor.getCharacteristic(BLE_UUID.CHAR_MOTOR),
-          serviceDevice.getCharacteristic(BLE_UUID.CHAR_SOFTWARE_REVISION),
-          serviceDevice.getCharacteristic(BLE_UUID.CHAR_MODEL_NUMBER),
-        ])
-      )
-      .then(([charMotor, charVersion, charModel]) => {
-        setBleCharMotor(charMotor);
-        charVersion
-          .readValue()
-          .then((e) => setCarSoftwareVersion(decoder.decode(e)));
-        charModel.readValue().then((e) => setCarModel(decoder.decode(e)));
-      })
-      .catch((error) => {
-        setError(error.toString());
-      })
-      .finally(() => setButtonLoading(false));
+      });
+      setBleDevice(device);
+      device.addEventListener('gattserverdisconnected', onDisconnected);
+      const gattService = await device.gatt.connect();
+      const serviceMotor = await gattService.getPrimaryService(
+        BLE_UUID.SERVICE_MOTOR
+      );
+      const charMotor = await serviceMotor.getCharacteristic(
+        BLE_UUID.CHAR_MOTOR
+      );
+      const serviceDevice = await gattService.getPrimaryService(
+        BLE_UUID.SERVICE_DEVICE
+      );
+      const [charVersion, charModel] = await Promise.all([
+        serviceDevice.getCharacteristic(BLE_UUID.CHAR_SOFTWARE_REVISION),
+        serviceDevice.getCharacteristic(BLE_UUID.CHAR_MODEL_NUMBER),
+      ]);
+
+      setBleCharMotor(charMotor);
+      setBleCharModel(charModel);
+      setBleCharSoftwareVersion(charVersion);
+    } catch (e) {
+      setError(e.toString());
+    }
+    setButtonLoading(false);
   };
 
   const moveWheels = (
@@ -168,8 +158,13 @@ const App = () => {
               <p>
                 <b>Device Info</b>
               </p>
-              <p>Car: {carModel}</p>
-              <p>Software Version: {carSoftwareVersion}</p>
+              <p>
+                Car: <CarModel characteristic={bleCharModel} />
+              </p>
+              <p>
+                Software Version:{' '}
+                <CarSoftwareRevision characteristic={bleCharSoftwareVersion} />
+              </p>
             </div>
           </div>
         </React.Fragment>

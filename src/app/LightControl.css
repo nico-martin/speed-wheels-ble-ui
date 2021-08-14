@@ -1,0 +1,8 @@
+.root {
+  opacity: 0.3;
+  cursor: pointer;
+}
+
+.rootActive {
+  opacity: 1;
+}

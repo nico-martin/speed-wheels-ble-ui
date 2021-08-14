@@ -35,4 +35,9 @@
 .version {
   font-size: var(--fs-small);
   color: var(--c-border-dark);
+
+  a {
+    color: var(--c-border-dark);
+    text-decoration: none;
+  }
 }
