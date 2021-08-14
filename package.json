@@ -2,7 +2,7 @@
   "name": "web-bluetooth-car-ui",
   "author": "Nico Martin - https://nico.dev",
   "license": "MIT",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "A web-based UI for the WebBluetoothCar",
   "scripts": {
     "dev": "npm run serve:dev & npm run build:dev",
