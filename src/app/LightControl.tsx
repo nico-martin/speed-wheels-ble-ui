@@ -17,6 +17,9 @@ const LightControl = ({
   const [lightCharacterisctic, setLightCharacterisctic] =
     React.useState<BluetoothRemoteGATTCharacteristic>(null);
 
+  const writeColor = async (r: number, g: number, b: number): Promise<void> =>
+    lightCharacterisctic.writeValue(new Uint8Array([0x00, r, g, b]));
+
   React.useEffect(() => {
     lightCharacterisctic && writeColor(0, 0, 0);
   }, [lightCharacterisctic]);
@@ -33,9 +36,6 @@ const LightControl = ({
       }
     }
   }, [direction]);
-
-  const writeColor = async (r: number, g: number, b: number): Promise<void> =>
-    lightCharacterisctic.writeValue(new Uint8Array([0x00, r, g, b]));
 
   const connect = async () => {
     try {

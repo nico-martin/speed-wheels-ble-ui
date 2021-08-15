@@ -11,8 +11,6 @@ import CarSoftwareRevision from './app/Control/Car/CarSoftwareRevision';
 import Footer from './app/Footer';
 import RemoteControl from './app/RemoteControl';
 
-const encoder = new TextEncoder();
-
 const USE_DEMO_CONTROLS = false;
 const BROWSER_SUPPORT = 'bluetooth' in navigator;
 
@@ -82,18 +80,11 @@ const App = () => {
     rightSpeed: number,
     important = false
   ) =>
-    queue.add(
-      () =>
-        bleCharMotor.writeValue(
-          encoder.encode(
-            JSON.stringify({
-              left: leftSpeed,
-              right: rightSpeed,
-            })
-          )
-        ),
-      important
-    );
+    queue.add(() => {
+      return bleCharMotor.writeValue(
+        new Uint8Array([leftSpeed + 100, rightSpeed + 100])
+      );
+    }, important);
 
   return (
     <div className={styles.root}>
