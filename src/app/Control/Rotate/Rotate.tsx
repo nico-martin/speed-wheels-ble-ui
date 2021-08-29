@@ -1,7 +1,7 @@
-import { number } from 'prop-types';
 import React from 'react';
-import { CloseButton, Icon } from '@theme';
+import { Icon } from '@theme';
 import cn from '@common/utils/classnames';
+import useScreenOrientation from '../../useScreenOrientation';
 import styles from './Rotate.css';
 import useDeviceOrientation from './useDeviceOrientation';
 import useElementBounds from './useElementBounds';
@@ -29,9 +29,10 @@ const Rotate = ({
   const [waited, setWaited] = React.useState<number>(5);
 
   React.useEffect(() => {
-    interval = window.setInterval(() => {
-      setWaited((waited) => waited - 1);
-    }, 1000);
+    interval = window.setInterval(
+      () => setWaited((waited) => waited - 1),
+      1000
+    );
   }, []);
 
   React.useEffect(() => {
@@ -133,4 +134,24 @@ const Rotate = ({
     </div>
   );
 };
-export default Rotate;
+
+export default (props) => {
+  const screenOrientation = useScreenOrientation();
+
+  return screenOrientation === 'landscape' ? (
+    <Rotate {...props} />
+  ) : window.DeviceOrientationEvent && 'ontouchstart' in window ? (
+    <div className={styles.featureCheck}>
+      <Icon icon="mdi/alert" className={styles.featureCheckIcon} />
+      <p>Your device does not support the device orientation</p>
+    </div>
+  ) : (
+    <div className={styles.featureCheck}>
+      <Icon
+        icon="mdi/phone-orientation-landscape"
+        className={styles.featureCheckIcon}
+      />
+      <p>Please turn your device to landscape mode</p>
+    </div>
+  );
+};

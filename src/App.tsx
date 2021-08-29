@@ -11,7 +11,7 @@ import CarSoftwareRevision from './app/Control/Car/CarSoftwareRevision';
 import Footer from './app/Footer';
 import RemoteControl from './app/RemoteControl';
 
-const USE_DEMO_CONTROLS = false;
+const USE_DEMO_CONTROLS = true;
 const BROWSER_SUPPORT = 'bluetooth' in navigator;
 
 const queue = new Queue();
@@ -46,19 +46,19 @@ const App = () => {
     try {
       const device = await navigator.bluetooth.requestDevice({
         //acceptAllDevices: true,
-        filters: [{ name: 'WebBluetoothCar' }],
+        filters: [{ name: 'SpeedWheels' }],
         optionalServices: [BLE_UUID.SERVICE_MOTOR, BLE_UUID.SERVICE_DEVICE],
       });
       setBleDevice(device);
       device.addEventListener('gattserverdisconnected', onDisconnected);
-      const gattService = await device.gatt.connect();
-      const serviceMotor = await gattService.getPrimaryService(
+      const gattServer = await device.gatt.connect();
+      const serviceMotor = await gattServer.getPrimaryService(
         BLE_UUID.SERVICE_MOTOR
       );
       const charMotor = await serviceMotor.getCharacteristic(
         BLE_UUID.CHAR_MOTOR
       );
-      const serviceDevice = await gattService.getPrimaryService(
+      const serviceDevice = await gattServer.getPrimaryService(
         BLE_UUID.SERVICE_DEVICE
       );
       const [charVersion, charModel] = await Promise.all([

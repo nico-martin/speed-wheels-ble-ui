@@ -56,3 +56,14 @@
   font-size: 2rem;
   font-weight: bold;
 }
+
+.featureCheck {
+  font-size: var(--fs-small);
+  text-align: center;
+  padding: var(--spacing);
+}
+
+.featureCheckIcon {
+  font-size: calc(2 * var(--fs-xlarge));
+  margin-bottom: 1rem;
+}

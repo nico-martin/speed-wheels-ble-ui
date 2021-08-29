@@ -1,4 +1,5 @@
 import React from 'react';
+import useScreenOrientation from '../../useScreenOrientation';
 
 type DeviceOrientation = {
   alpha: number | null;

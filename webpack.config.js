@@ -1,3 +1,6 @@
+const WebpackPwaManifest = require('webpack-pwa-manifest');
+const workboxPlugin = require('workbox-webpack-plugin');
+
 const app = require('./app.json');
 
 const fs = require('fs');
@@ -137,6 +140,31 @@ module.exports = (env, argv) => {
         API_BASE: JSON.stringify(
           process.env.API_BASE || 'http://localhost:8080/'
         ),
+      }),
+      new WebpackPwaManifest({
+        name: app.title,
+        short_name: app.short,
+        description: app.description,
+        theme_color: app.color,
+        background_color: app.colorbkg,
+        crossorigin: 'use-credentials',
+        start_url: '/',
+        orientation: 'any',
+        fingerprints: false,
+        icons: [
+          {
+            src: path.resolve(`${dirSrc}/assets/icon.png`),
+            sizes: [96, 128, 192, 256, 384, 512],
+            destination: path.join('assets', 'pwa-icon'),
+            ios: true,
+            purpose: 'maskable any',
+          },
+        ],
+      }),
+      new workboxPlugin.InjectManifest({
+        swSrc: './src/service-worker.js',
+        include: [/\.html$/, /\.js$/, /\.css$/],
+        maximumFileSizeToCacheInBytes: 5000000,
       }),
     ],
     resolve: {

@@ -1,7 +1,7 @@
 {
-  "title": "WebBluetooth Car UI",
-  "short": "SPG",
-  "description": "A web-based UI for the WebBluetoothCar",
-  "color": "#00796B",
+  "title": "SpeedWheels Bluetooth Car UI",
+  "short": "SpeedWheels",
+  "description": "A web-based UI for the SpeedWheels Bluetooth Car",
+  "color": "#287aa9",
   "colorbkg": "#ffffff"
 }
