@@ -18,7 +18,7 @@ const Footer = ({ className = '' }: { className?: string }) => {
           href="https://github.com/nico-martin/WebBluetoothCarUI"
           target="_blank"
         >
-          WebBluetoothCarUI
+          SpeedWheels UI
         </a>{' '}
         v{pkg.version}
       </span>{' '}
