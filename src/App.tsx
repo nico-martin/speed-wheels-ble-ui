@@ -11,7 +11,7 @@ import CarSoftwareRevision from './app/Control/Car/CarSoftwareRevision';
 import Footer from './app/Footer';
 import RemoteControl from './app/RemoteControl';
 
-const USE_DEMO_CONTROLS = true;
+const USE_DEMO_CONTROLS = false;
 const BROWSER_SUPPORT = 'bluetooth' in navigator;
 
 const queue = new Queue();

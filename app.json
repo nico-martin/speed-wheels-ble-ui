@@ -1,7 +1,7 @@
 {
-  "title": "SpeedWheels Bluetooth Car UI",
+  "title": "SpeedWheels BLE Car UI",
   "short": "SpeedWheels",
-  "description": "A web-based UI for the SpeedWheels Bluetooth Car",
+  "description": "A web-based UI for the SpeedWheels BLE Car",
   "color": "#287aa9",
   "colorbkg": "#ffffff"
 }

@@ -138,14 +138,12 @@ const Rotate = ({
 export default (props) => {
   const screenOrientation = useScreenOrientation();
 
-  return screenOrientation === 'landscape' ? (
-    <Rotate {...props} />
-  ) : window.DeviceOrientationEvent && 'ontouchstart' in window ? (
+  return !window.DeviceOrientationEvent ? (
     <div className={styles.featureCheck}>
       <Icon icon="mdi/alert" className={styles.featureCheckIcon} />
       <p>Your device does not support the device orientation</p>
     </div>
-  ) : (
+  ) : screenOrientation !== 'landscape' ? (
     <div className={styles.featureCheck}>
       <Icon
         icon="mdi/phone-orientation-landscape"
@@ -153,5 +151,7 @@ export default (props) => {
       />
       <p>Please turn your device to landscape mode</p>
     </div>
+  ) : (
+    <Rotate {...props} />
   );
 };
