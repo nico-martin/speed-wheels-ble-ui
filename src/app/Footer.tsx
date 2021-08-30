@@ -15,7 +15,7 @@ const Footer = ({ className = '' }: { className?: string }) => {
       </button>
       <span className={styles.version}>
         <a
-          href="https://github.com/nico-martin/WebBluetoothCarUI"
+          href="https://github.com/nico-martin/speed-wheels-ble-ui"
           target="_blank"
         >
           SpeedWheels UI
@@ -36,10 +36,10 @@ const Footer = ({ className = '' }: { className?: string }) => {
         <Icon icon={`mdi/${isFullScreen ? 'fullscreen-exit' : 'fullscreen'}`} />
       </button>
       {infos && (
-        <PortalBox close={() => setInfos(false)} title="WebBluetooth Car">
+        <PortalBox close={() => setInfos(false)} title="SpeedWheels BLE Car">
           <div className={styles.info}>
             <p>
-              <b>WebBluetooth Car</b> is a project by{' '}
+              <b>SpeedWheels BLE Car</b> is a project by{' '}
               <a href="https://nico.dev" target="_blank">
                 Nico Martin
               </a>
@@ -48,17 +48,17 @@ const Footer = ({ className = '' }: { className?: string }) => {
             <p>
               You can find more about this interface on{' '}
               <a
-                href="https://github.com/nico-martin/WebBluetoothCarUI"
+                href="https://github.com/nico-martin/speed-wheels-ble-ui"
                 target="_blank"
               >
                 GitHub
               </a>{' '}
               as well as the{' '}
               <a
-                href="https://github.com/nico-martin/WebBluetoothCar"
+                href="https://github.com/nico-martin/speed-wheels-ble"
                 target="_blank"
               >
-                Bluetooth Car
+                BLE Car
               </a>{' '}
               it was developed for.
             </p>
