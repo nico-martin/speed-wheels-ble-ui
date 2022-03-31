@@ -1,0 +1,40 @@
+.root {
+  display: flex;
+  align-items: center;
+  color: var(--c-white);
+}
+
+.powerOff {
+  position: relative;
+  font-size: 45px;
+  width: 45px;
+  height: 45px;
+  cursor: pointer;
+  opacity: 0.6;
+  color: var(--c-p);
+  @mixin transition;
+
+  &:hover {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+
+  &:disabled {
+    pointer-events: none;
+  }
+}
+
+.powerOffLoader {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+}
+
+.deviceInfo {
+  font-size: 12px;
+  margin-left: 6px;
+
+  p + p {
+    margin-top: 6px;
+  }
+}

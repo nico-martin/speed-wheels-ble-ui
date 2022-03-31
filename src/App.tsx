@@ -8,6 +8,7 @@ import styles from './App.css';
 import BluetoothButton from './app/BluetoothButton';
 import CarModel from './app/Control/Car/CarModel';
 import CarSoftwareRevision from './app/Control/Car/CarSoftwareRevision';
+import Device from './app/Device/Device';
 import Footer from './app/Footer';
 import RemoteControl from './app/RemoteControl';
 
@@ -30,6 +31,12 @@ const App = () => {
     React.useState<BluetoothRemoteGATTCharacteristic>(null);
   const [bleCharModel, setBleCharModel] =
     React.useState<BluetoothRemoteGATTCharacteristic>(null);
+  const [bleCharBattery, setBleCharBattery] =
+    React.useState<BluetoothRemoteGATTCharacteristic>(null);
+  const [bleCharBatteryLoading, setBleCharBatteryLoading] =
+    React.useState<BluetoothRemoteGATTCharacteristic>(null);
+  const [bleCharMatrix, setBleCharMatrix] =
+    React.useState<BluetoothRemoteGATTCharacteristic>(null);
 
   const [buttonLoading, setButtonLoading] = React.useState<boolean>(false);
   const [error, setError] = React.useState<string>('');
@@ -46,29 +53,47 @@ const App = () => {
     try {
       const device = await navigator.bluetooth.requestDevice({
         //acceptAllDevices: true,
-        filters: [{ name: 'SpeedWheels' }],
-        optionalServices: [BLE_UUID.SERVICE_MOTOR, BLE_UUID.SERVICE_DEVICE],
+        filters: [{ namePrefix: 'SpeedWheels' }],
+        optionalServices: [
+          BLE_UUID.SERVICE_MOTOR,
+          //BLE_UUID.SERVICE_DEVICE,
+          //BLE_UUID.SERVICE_BATTERY,
+        ],
       });
       setBleDevice(device);
       device.addEventListener('gattserverdisconnected', onDisconnected);
       const gattServer = await device.gatt.connect();
-      const serviceMotor = await gattServer.getPrimaryService(
-        BLE_UUID.SERVICE_MOTOR
-      );
-      const charMotor = await serviceMotor.getCharacteristic(
-        BLE_UUID.CHAR_MOTOR
-      );
-      const serviceDevice = await gattServer.getPrimaryService(
-        BLE_UUID.SERVICE_DEVICE
-      );
-      const [charVersion, charModel] = await Promise.all([
-        serviceDevice.getCharacteristic(BLE_UUID.CHAR_SOFTWARE_REVISION),
-        serviceDevice.getCharacteristic(BLE_UUID.CHAR_MODEL_NUMBER),
+
+      const [serviceMotor /*, serviceDevice, serviceBattery*/] =
+        await Promise.all([
+          gattServer.getPrimaryService(BLE_UUID.SERVICE_MOTOR),
+          //gattServer.getPrimaryService(BLE_UUID.SERVICE_DEVICE),
+          //gattServer.getPrimaryService(BLE_UUID.SERVICE_BATTERY),
+        ]);
+
+      const [
+        //charVersion,
+        //charModel,
+        charMotor,
+        //charMatrix,
+        //charBattery,
+        //charBatteryLoading,
+      ] = await Promise.all([
+        //serviceDevice.getCharacteristic(BLE_UUID.CHAR_SOFTWARE_REVISION),
+        //serviceDevice.getCharacteristic(BLE_UUID.CHAR_MODEL_NUMBER),
+        serviceMotor.getCharacteristic(BLE_UUID.CHAR_MOTOR),
+        //serviceMotor.getCharacteristic(BLE_UUID.CHAR_MATRIX),
+        //serviceBattery.getCharacteristic(BLE_UUID.CHAR_BATTERY),
+        //serviceBattery.getCharacteristic(BLE_UUID.CHAR_BATTERY_LOADING),
       ]);
 
       setBleCharMotor(charMotor);
+      /*
       setBleCharModel(charModel);
       setBleCharSoftwareVersion(charVersion);
+      setBleCharBattery(charBattery);
+      setBleCharBatteryLoading(charBatteryLoading);
+      setBleCharMatrix(charMatrix);*/
     } catch (e) {
       setError(e.toString());
     }
@@ -124,7 +149,13 @@ const App = () => {
             onCmd={(left, right) => moveWheels(left, right)}
             onCmdStop={() => moveWheels(0, 0, true)}
           />
-          <div className={styles.device}>
+          <Device
+            className={styles.device}
+            bleDevice={bleDevice}
+            bleCharBattery={bleCharBattery}
+            bleCharBatteryLoading={bleCharBatteryLoading}
+          />
+          {/*<div className={styles.device}>
             <button
               className={styles.powerOff}
               disabled={powerOffLoading}
@@ -157,7 +188,7 @@ const App = () => {
                 <CarSoftwareRevision characteristic={bleCharSoftwareVersion} />
               </p>
             </div>
-          </div>
+          </div>*/}
         </React.Fragment>
       )}
       <Footer className={cn(styles.footer)} />

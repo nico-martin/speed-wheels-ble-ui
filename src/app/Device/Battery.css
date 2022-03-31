@@ -1,0 +1,11 @@
+.root {
+}
+
+.battery {
+  display: flex;
+  align-items: center;
+}
+
+.batteryIcon {
+  margin-right: 0.2em;
+}
