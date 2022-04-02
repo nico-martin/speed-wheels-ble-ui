@@ -1,6 +1,10 @@
 import React from 'react';
 import { Icon } from '@theme';
 import cn from '@common/utils/classnames';
+import {
+  interpolateWheelSpeed,
+  clearInterpolate,
+} from '@common/utils/interpolateWheelSpeed';
 import styles from './ArrowKeys.css';
 
 const ArrowKeys = ({
@@ -14,27 +18,72 @@ const ArrowKeys = ({
   onCmdStop: () => void;
   className?: string;
 }) => {
+  const [activeKey, setActiveKey] = React.useState<'F' | 'B' | 'L' | 'R'>(null);
   const forward = () => {
-    onCmdLeft(70);
-    onCmdRight(70);
+    setActiveKey('F');
+    interpolateWheelSpeed(
+      'forward',
+      [20, 100],
+      [20, 100],
+      6,
+      2000,
+      (left, right) => {
+        onCmdLeft(left);
+        onCmdRight(right);
+      }
+    );
   };
 
   const backward = () => {
-    onCmdLeft(-50);
-    onCmdRight(-50);
+    setActiveKey('B');
+    interpolateWheelSpeed(
+      'forward',
+      [-10, -50],
+      [-10, -50],
+      5,
+      2000,
+      (left, right) => {
+        onCmdLeft(left);
+        onCmdRight(right);
+      }
+    );
   };
 
   const left = () => {
-    onCmdLeft(1);
-    onCmdRight(50);
+    setActiveKey('L');
+    interpolateWheelSpeed(
+      'forward',
+      [0, 5],
+      [5, 40],
+      6,
+      2000,
+      (left, right) => {
+        onCmdLeft(left);
+        onCmdRight(right);
+      }
+    );
   };
 
   const right = () => {
-    onCmdLeft(50);
-    onCmdRight(1);
+    setActiveKey('R');
+    interpolateWheelSpeed(
+      'forward',
+      [5, 40],
+      [0, 5],
+      6,
+      2000,
+      (left, right) => {
+        onCmdLeft(left);
+        onCmdRight(right);
+      }
+    );
   };
 
-  const stop = () => onCmdStop();
+  const stop = () => {
+    clearInterpolate('all');
+    setActiveKey(null);
+    onCmdStop();
+  };
 
   const keydown = (e) => {
     if (e.keyCode == '38') {
@@ -63,7 +112,9 @@ const ArrowKeys = ({
     <div className={cn(styles.root, className)}>
       <div className={styles.buttons}>
         <button
-          className={cn(styles.button, styles.arrowUp)}
+          className={cn(styles.button, styles.arrowUp, {
+            [styles.buttonActive]: activeKey === 'F',
+          })}
           onMouseDown={forward}
           onMouseUp={stop}
           onTouchStart={forward}
@@ -72,7 +123,9 @@ const ArrowKeys = ({
           <Icon className={styles.icon} icon="mdi/arrow" />
         </button>
         <button
-          className={cn(styles.button, styles.arrowLeft)}
+          className={cn(styles.button, styles.arrowLeft, {
+            [styles.buttonActive]: activeKey === 'L',
+          })}
           onMouseDown={left}
           onMouseUp={stop}
           onTouchStart={left}
@@ -81,7 +134,9 @@ const ArrowKeys = ({
           <Icon className={styles.icon} icon="mdi/arrow" />
         </button>
         <button
-          className={cn(styles.button, styles.arrowRight)}
+          className={cn(styles.button, styles.arrowRight, {
+            [styles.buttonActive]: activeKey === 'R',
+          })}
           onMouseDown={right}
           onMouseUp={stop}
           onTouchStart={right}
@@ -90,7 +145,9 @@ const ArrowKeys = ({
           <Icon className={styles.icon} icon="mdi/arrow" />
         </button>
         <button
-          className={cn(styles.button, styles.arrowDown)}
+          className={cn(styles.button, styles.arrowDown, {
+            [styles.buttonActive]: activeKey === 'B',
+          })}
           onMouseDown={backward}
           onMouseUp={stop}
           onTouchStart={backward}

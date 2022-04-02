@@ -19,6 +19,14 @@
   padding: 0.5em 0.7em;
   border-radius: 0.3em;
   font-size: 1.5rem;
+  cursor: pointer;
+  transition: all ease-in-out 100ms;
+
+  &.buttonActive {
+    background-color: var(--c-bluetooth-dark);
+    box-shadow: inset 2px 2px 10px 2px rgba(0, 0, 0, 0.14);
+    transform: scale(1.05);
+  }
 }
 
 .arrowUp {

@@ -1,6 +1,9 @@
 import React from 'react';
 import { Icon } from '@theme';
+import { useBleCharacteristic } from '@common/hooks/useBle';
 import cn from '@common/utils/classnames';
+import { BLE_UUID } from '@common/utils/constants';
+import Queue from '@common/utils/promiseQueue';
 import ArrowKeys from './Control/ArrowKeys/ArrowKeys';
 import Circle from './Control/Circle/Circle';
 import GestureControl from './Control/GestureControl/GestureControl';
@@ -15,16 +18,22 @@ const CONTROLS = {
   hand: GestureControl,
 };
 
+const queue = new Queue();
+const mockSend = (leftSpeed, rightSpeed) => {
+  console.log(leftSpeed, rightSpeed);
+  return new Promise((resolve) =>
+    setTimeout(() => resolve({ leftSpeed, rightSpeed }), 100)
+  );
+};
+
 const START_CONTROLS = 0;
 
 const RemoteControl = ({
-  onCmd,
-  onCmdStop,
   className = '',
+  bleMotorService = null,
 }: {
-  onCmd: (left: number, right: number) => void;
-  onCmdStop: () => void;
   className?: string;
+  bleMotorService?: BluetoothRemoteGATTService;
 }) => {
   const [leftSpeed, setLeftSpeed] = React.useState<number>(0);
   const [rightSpeed, setRightSpeed] = React.useState<number>(0);
@@ -32,16 +41,32 @@ const RemoteControl = ({
     Object.keys(CONTROLS)[START_CONTROLS]
   );
 
+  const { writeValue } = useBleCharacteristic(
+    bleMotorService,
+    BLE_UUID.CHAR_MOTOR
+  );
+
+  const moveWheels = (
+    leftSpeed: number,
+    rightSpeed: number,
+    important = false
+  ) =>
+    bleMotorService
+      ? writeValue(new Uint8Array([leftSpeed + 100, rightSpeed + 100]))
+      : console.log({ leftSpeed, rightSpeed, important });
+
   React.useEffect(() => {
-    if (leftSpeed === 0 && rightSpeed === 0) {
-      onCmdStop();
+    moveWheels(leftSpeed, rightSpeed, leftSpeed === 0 && rightSpeed === 0);
+    /**
+     * if (leftSpeed === 0 && rightSpeed === 0) {
+      moveWheels(0, 0, true);
     }
 
-    /**
+
      * somehow the wheels need a minimum speed so both wheels are spinning.
      * otherwise one wheel might not spin when it should while the other is 0
      * thats why either both are 0 (stop) or both have a minimum speed.
-     */
+
 
     let sendLeftSpeed = leftSpeed;
     let sendRightSpeed = rightSpeed;
@@ -64,11 +89,11 @@ const RemoteControl = ({
       sendRightSpeed = rightSpeed >= 0 ? minSpeedPos : minSpeedNeg;
     }
 
-    onCmd(sendLeftSpeed, sendRightSpeed);
+    moveWheels(sendLeftSpeed, sendRightSpeed);     */
   }, [leftSpeed, rightSpeed]);
 
   const ControlComponent = React.useMemo(() => {
-    onCmdStop();
+    moveWheels(0, 0, true);
     return CONTROLS[activeControl];
   }, [activeControl]);
 
