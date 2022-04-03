@@ -57,39 +57,6 @@ const RemoteControl = ({
 
   React.useEffect(() => {
     moveWheels(leftSpeed, rightSpeed, leftSpeed === 0 && rightSpeed === 0);
-    /**
-     * if (leftSpeed === 0 && rightSpeed === 0) {
-      moveWheels(0, 0, true);
-    }
-
-
-     * somehow the wheels need a minimum speed so both wheels are spinning.
-     * otherwise one wheel might not spin when it should while the other is 0
-     * thats why either both are 0 (stop) or both have a minimum speed.
-
-
-    let sendLeftSpeed = leftSpeed;
-    let sendRightSpeed = rightSpeed;
-    const minSpeedPos = 10;
-    const minSpeedNeg = minSpeedPos * -1;
-
-    if (
-      rightSpeed !== 0 &&
-      leftSpeed >= minSpeedNeg &&
-      leftSpeed <= minSpeedPos
-    ) {
-      sendLeftSpeed = leftSpeed >= 0 ? minSpeedPos : minSpeedNeg;
-    }
-
-    if (
-      leftSpeed !== 0 &&
-      rightSpeed >= minSpeedNeg &&
-      rightSpeed <= minSpeedPos
-    ) {
-      sendRightSpeed = rightSpeed >= 0 ? minSpeedPos : minSpeedNeg;
-    }
-
-    moveWheels(sendLeftSpeed, sendRightSpeed);     */
   }, [leftSpeed, rightSpeed]);
 
   const ControlComponent = React.useMemo(() => {

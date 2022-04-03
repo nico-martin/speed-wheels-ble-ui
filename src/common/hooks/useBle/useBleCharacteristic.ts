@@ -1,7 +1,13 @@
 import PQueue from 'p-queue';
 import React from 'react';
+import PromiseQueue from './promiseQueue';
 
-const bleQueue = new PQueue({ concurrency: 1 });
+const bleQueue = new PromiseQueue();
+
+/**
+ * TODO:
+ * Promise queue needs two modes: "onlyLast", "sequence"
+ */
 
 export const useBleCharacteristic = (
   service: BluetoothRemoteGATTService,
@@ -34,7 +40,8 @@ export const useBleCharacteristic = (
 
   const readValue = async () => {
     if (characteristic?.properties?.read) {
-      const value = await bleQueue.add(() => characteristic.readValue());
+      //const value = await bleQueue.add(() => characteristic.readValue());
+      const value = await characteristic.readValue();
       setValue(value);
       return value;
     }

@@ -1,4 +1,4 @@
-import './App';
+import './App2';
 import './styles.css';
 
 'serviceWorker' in navigator &&
