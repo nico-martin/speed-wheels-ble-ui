@@ -1,79 +1,42 @@
-const PROMISE_EVENT_NAME = 'promise-executed';
-
-/**
- * TODO: maybe some refactoring with the CustomEvent syntax?
- */
-
-enum PROMISE_STATES {
-  ADDED = 'ADDED',
-  FULLFILLED = 'FULLFILLED',
-  REJECTED = 'REJECTED',
-  PENDING = 'PENDING',
-  SKIPPED = 'SKIPPED',
-}
-
-export enum QUEUE_TYPES {
-  ONLY_LAST = 'ONLY_LAST',
-  SEQUENCE = 'SQUENCE',
-}
-
-interface QueueElementI {
-  id: number;
-  promise: () => Promise<any>;
-  status: PROMISE_STATES;
-}
-
-interface QueueElementExecutedI {
-  id: number;
-  response: any;
-  status: PROMISE_STATES;
-}
+import EventEmitter from './eventEmitter';
+import { PROMISE_STATES, QueueElementI, QueueElementExecutedI } from './types';
 
 export default class Queue {
   queue: Array<QueueElementI>;
   inProgress: boolean;
   logging: boolean;
   latestId: number;
-  type: QUEUE_TYPES;
+  executeEvent: EventEmitter<QueueElementExecutedI>;
 
-  constructor(
-    type: QUEUE_TYPES = QUEUE_TYPES.SEQUENCE,
-    logging: boolean = false
-  ) {
+  constructor(logging: boolean = false) {
     this.logging = logging;
     this.queue = [];
     this.inProgress = false;
     this.latestId = 0;
-    this.type = type;
+    this.executeEvent = new EventEmitter();
   }
 
   log(message?: any, ...optionalParams: any[]): void {
     this.logging && console.log(message, ...optionalParams);
   }
 
-  executeDispatch(data: QueueElementExecutedI) {
-    const event = new CustomEvent(PROMISE_EVENT_NAME, {
-      detail: data,
-    });
-
-    document.dispatchEvent(event);
-  }
-
-  executeOn(callback: (data: QueueElementExecutedI) => void) {
-    // @ts-ignore
-    document.addEventListener(PROMISE_EVENT_NAME, (e) => callback(e.detail));
-  }
-
-  add(promise: () => Promise<any>, emptyQueue: boolean = false) {
+  add<T>(
+    promise: () => Promise<T>,
+    queueKey: string = 'default',
+    emptyQueue: boolean = false
+  ): Promise<T> {
     if (!this.queue) {
       this.queue = [];
     }
+
+    this.log('queue before add', this.queue);
 
     if (emptyQueue) {
       this.queue = this.queue.map((queueElement) => ({
         ...queueElement,
         status:
-          queueElement.status === PROMISE_STATES.ADDED
+          queueElement.status === PROMISE_STATES.ADDED &&
+          queueElement.queueKey === queueKey
             ? PROMISE_STATES.SKIPPED
             : queueElement.status,
       }));
@@ -85,6 +48,7 @@ export default class Queue {
       id: this.latestId,
       promise,
       status: PROMISE_STATES.ADDED,
+      queueKey,
     };
 
     this.queue.push(addElement);
@@ -94,7 +58,7 @@ export default class Queue {
     !this.inProgress && this.executeNext();
 
     return new Promise((resolve, reject) => {
-      this.executeOn((executedElement) => {
+      this.executeEvent.on((executedElement) => {
         if (executedElement.id === addElement.id) {
           if (executedElement.status === PROMISE_STATES.FULLFILLED) {
             resolve(executedElement.response);
@@ -110,6 +74,7 @@ export default class Queue {
     const possibleNextElements = this.queue.filter(
       ({ status }) => status === PROMISE_STATES.ADDED
     );
+
     if (possibleNextElements.length === 0) {
       return false;
     }
@@ -117,18 +82,6 @@ export default class Queue {
     return possibleNextElements.reduce((latestElement, newElement) => {
       if (!latestElement) {
         return newElement;
-      }
-
-      if (this.type === QUEUE_TYPES.ONLY_LAST) {
-        if (newElement.id > latestElement.id) {
-          return newElement;
-        } else {
-          this.updateQueueElement(newElement.id, {
-            status: PROMISE_STATES.SKIPPED,
-          });
-
-          return latestElement;
-        }
       }
 
       if (newElement.id < latestElement.id) {
@@ -150,7 +103,7 @@ export default class Queue {
             status: PROMISE_STATES.FULLFILLED,
           });
 
-          this.executeDispatch({
+          this.executeEvent.dispatch({
             id: nextPromise.id,
             response: r,
             status: PROMISE_STATES.FULLFILLED,
@@ -161,16 +114,18 @@ export default class Queue {
             status: PROMISE_STATES.REJECTED,
           });
 
-          this.executeDispatch({
+          this.executeEvent.dispatch({
             id: nextPromise.id,
             response: e,
             status: PROMISE_STATES.REJECTED,
           });
         })
         .finally(() => {
+          const newNextPromise = this.getNextPromise();
           this.log('queue after execute', this.queue);
+          this.log('next Promise after execute', newNextPromise);
 
-          if (this.getNextPromise()) {
+          if (newNextPromise) {
             this.executeNext();
           } else {
             this.inProgress = false;

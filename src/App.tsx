@@ -10,7 +10,7 @@ import Device from './app/Device/Device';
 import Footer from './app/Footer';
 import RemoteControl from './app/RemoteControl';
 
-const USE_DEMO_CONTROLS = true;
+const USE_DEMO_CONTROLS = false;
 
 const App = () => {
   const [bleDevice, setBleDevice] = React.useState<BluetoothDevice>(null);

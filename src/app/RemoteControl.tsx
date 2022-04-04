@@ -3,7 +3,6 @@ import { Icon } from '@theme';
 import { useBleCharacteristic } from '@common/hooks/useBle';
 import cn from '@common/utils/classnames';
 import { BLE_UUID } from '@common/utils/constants';
-import Queue from '@common/utils/promiseQueue';
 import ArrowKeys from './Control/ArrowKeys/ArrowKeys';
 import Circle from './Control/Circle/Circle';
 import GestureControl from './Control/GestureControl/GestureControl';
@@ -16,14 +15,6 @@ const CONTROLS = {
   movingpoint: Circle,
   rotate: Rotate,
   hand: GestureControl,
-};
-
-const queue = new Queue();
-const mockSend = (leftSpeed, rightSpeed) => {
-  console.log(leftSpeed, rightSpeed);
-  return new Promise((resolve) =>
-    setTimeout(() => resolve({ leftSpeed, rightSpeed }), 100)
-  );
 };
 
 const START_CONTROLS = 0;
@@ -43,7 +34,8 @@ const RemoteControl = ({
 
   const { writeValue } = useBleCharacteristic(
     bleMotorService,
-    BLE_UUID.CHAR_MOTOR
+    BLE_UUID.CHAR_MOTOR,
+    true
   );
 
   const moveWheels = (

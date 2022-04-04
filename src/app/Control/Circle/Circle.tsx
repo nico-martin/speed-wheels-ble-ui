@@ -21,8 +21,6 @@ const Circle = ({
     x: number;
     y: number;
   }>({ y: 0, x: 0 });
-  const [showInfo, setShowInfo] = React.useState<boolean>(false);
-
   const circle = useElementBounds(rootRef);
   const bubblePosition = React.useMemo<{ x: number; y: number }>(
     () => ({
@@ -39,7 +37,7 @@ const Circle = ({
       Math.round((100 / (circle.height / 2)) * bubblePosition.y) * -1 || 0;
 
     const adjustment = (relativeY / 100) * relativeX;
-    const slowdown = 40;
+    const slowdown = 10;
 
     return {
       left:
