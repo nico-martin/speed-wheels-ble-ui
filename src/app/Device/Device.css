@@ -1,7 +1,7 @@
 .root {
   display: flex;
   align-items: center;
-  color: var(--c-white);
+  color: var(--c-p);
 }
 
 .powerOff {

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Icon, Loader } from '@theme';
+import { Icon } from '@theme';
 import cn from '@common/utils/classnames';
 import styles from './Device.css';
 
