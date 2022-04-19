@@ -16,6 +16,8 @@ const App = () => {
   const [bleDevice, setBleDevice] = React.useState<BluetoothDevice>(null);
   const [bleMotorService, setBleMotorService] =
     React.useState<BluetoothRemoteGATTService>(null);
+  const [bleLedService, setBleLedService] =
+    React.useState<BluetoothRemoteGATTService>(null);
 
   const [buttonLoading, setButtonLoading] = React.useState<boolean>(false);
   const [error, setError] = React.useState<string>('');
@@ -29,14 +31,18 @@ const App = () => {
     setButtonLoading(true);
     setError('');
     getBleServer(
-      [BLE_UUID.SERVICE_MOTOR],
+      [BLE_UUID.SERVICE_MOTOR, BLE_UUID.SERVICE_LED],
       [{ namePrefix: 'SpeedWheels' }],
       (device) => onDisconnected(device)
     ).then(({ device, server }) => {
       setBleDevice(device);
-      Promise.all([server.getPrimaryService(BLE_UUID.SERVICE_MOTOR)])
-        .then(([motor]) => {
+      Promise.all([
+        server.getPrimaryService(BLE_UUID.SERVICE_MOTOR),
+        server.getPrimaryService(BLE_UUID.SERVICE_LED),
+      ])
+        .then(([motor, led]) => {
           setBleMotorService(motor);
+          setBleLedService(led);
         })
         .catch((e) => setError(e.toString()))
         .finally(() => setButtonLoading(false));
@@ -73,7 +79,10 @@ const App = () => {
         </div>
       ) : (
         <React.Fragment>
-          <RemoteControl bleMotorService={bleMotorService} />
+          <RemoteControl
+            bleMotorService={bleMotorService}
+            bleLedService={bleLedService}
+          />
           <Device className={styles.device} bleDevice={bleDevice} />
         </React.Fragment>
       )}

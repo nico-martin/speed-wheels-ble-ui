@@ -22,9 +22,11 @@ const START_CONTROLS = 0;
 const RemoteControl = ({
   className = '',
   bleMotorService = null,
+  bleLedService = null,
 }: {
   className?: string;
   bleMotorService?: BluetoothRemoteGATTService;
+  bleLedService?: BluetoothRemoteGATTService;
 }) => {
   const [leftSpeed, setLeftSpeed] = React.useState<number>(0);
   const [rightSpeed, setRightSpeed] = React.useState<number>(0);
@@ -38,14 +40,53 @@ const RemoteControl = ({
     true
   );
 
+  const { writeValue: writeValueLed, value: ledValue } = useBleCharacteristic(
+    bleLedService,
+    BLE_UUID.CHAR_LED
+  );
+
   const moveWheels = (
     leftSpeed: number,
     rightSpeed: number,
     important = false
-  ) =>
+  ) => {
+    const left = leftSpeed + 100;
+    const right = rightSpeed + 100;
+
+    /**
+     * TODO
+     * writeValueLed does not work
+     */
+
+    if (leftSpeed === 0 && rightSpeed === 0) {
+      console.log('LED stop');
+      writeValueLed(new Uint8Array([0x00]));
+    } else if (leftSpeed > 0 && rightSpeed > 0) {
+      if (leftSpeed > rightSpeed) {
+        console.log('LED right');
+        writeValueLed(new Uint8Array([0x04]));
+      } else if (rightSpeed > leftSpeed) {
+        console.log('LED left');
+        writeValueLed(new Uint8Array([0x03]));
+      } else {
+        console.log('LED forward');
+        writeValueLed(new Uint8Array([0x02]));
+      }
+    } else {
+      console.log('LED backward');
+      writeValueLed(new Uint8Array([0x07]));
+    }
+
+    console.log({ leftSpeed, rightSpeed });
+
     bleMotorService
       ? writeValue(new Uint8Array([leftSpeed + 100, rightSpeed + 100]))
       : console.log({ leftSpeed, rightSpeed, important });
+  };
+
+  React.useEffect(() => {
+    console.log({ ledValue });
+  }, [ledValue]);
 
   React.useEffect(() => {
     moveWheels(leftSpeed, rightSpeed, leftSpeed === 0 && rightSpeed === 0);

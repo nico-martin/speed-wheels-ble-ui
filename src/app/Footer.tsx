@@ -55,10 +55,10 @@ const Footer = ({ className = '' }: { className?: string }) => {
               </a>{' '}
               as well as the{' '}
               <a
-                href="https://github.com/nico-martin/speed-wheels-ble"
+                href="https://github.com/nico-martin/speed-wheels-ble-arduino"
                 target="_blank"
               >
-                BLE Car
+                Arduino based BLE Car
               </a>{' '}
               it was developed for.
             </p>

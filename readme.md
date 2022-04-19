@@ -1,1 +1,3 @@
 # SpeedWheels BLE Car UI
+
+This is the source code of [https://speed-wheels.nico.dev/](https://speed-wheels.nico.dev/), a browser based remote control for [Speed Wheels BLE](https://github.com/nico-martin/speed-wheels-ble-arduino) that uses the [WebBluetooth API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Bluetooth_API) to connect to the BLE Server of the Car and reads and writes the services.
