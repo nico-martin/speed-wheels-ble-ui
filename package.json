@@ -2,7 +2,7 @@
   "name": "speed-wheels-ui",
   "author": "Nico Martin - https://nico.dev",
   "license": "MIT",
-  "version": "0.5.4",
+  "version": "0.5.5",
   "description": "A web-based UI for the SpeedWheels BLE Car",
   "scripts": {
     "dev": "npm run serve:dev & npm run build:dev",

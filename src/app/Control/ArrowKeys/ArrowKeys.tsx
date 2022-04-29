@@ -53,7 +53,7 @@ const ArrowKeys = ({
     setActiveKey('L');
     interpolateWheelSpeed(
       'forward',
-      [0, 20],
+      [0, 0],
       [5, 60],
       6,
       4000,
@@ -69,7 +69,7 @@ const ArrowKeys = ({
     interpolateWheelSpeed(
       'forward',
       [5, 60],
-      [0, 20],
+      [0, 0],
       6,
       4000,
       (left, right) => {
