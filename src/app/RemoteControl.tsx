@@ -18,6 +18,8 @@ const CONTROLS = {
 };
 
 const START_CONTROLS = 0;
+const FACTOR_LEFT = 1;
+const FACTOR_RIGHT = 1;
 
 const RemoteControl = ({
   className = '',
@@ -53,15 +55,10 @@ const RemoteControl = ({
     const left = leftSpeed + 100;
     const right = rightSpeed + 100;
 
-    /**
-     * TODO
-     * writeValueLed does not work
-     */
-
     if (leftSpeed === 0 && rightSpeed === 0) {
       console.log('LED stop');
       writeValueLed(new Uint8Array([0x00]));
-    } else if (leftSpeed > 0 && rightSpeed > 0) {
+    } else if (leftSpeed >= 0 && rightSpeed >= 0) {
       if (leftSpeed > rightSpeed) {
         console.log('LED right');
         writeValueLed(new Uint8Array([0x04]));
@@ -77,10 +74,18 @@ const RemoteControl = ({
       writeValueLed(new Uint8Array([0x07]));
     }
 
-    console.log({ leftSpeed, rightSpeed });
+    console.log('speed', {
+      leftSpeed: leftSpeed * FACTOR_LEFT + 100,
+      rightSpeed: rightSpeed * FACTOR_RIGHT + 100,
+    });
 
     bleMotorService
-      ? writeValue(new Uint8Array([leftSpeed + 100, rightSpeed + 100]))
+      ? writeValue(
+          new Uint8Array([
+            leftSpeed * FACTOR_LEFT + 100,
+            rightSpeed * FACTOR_RIGHT + 100,
+          ])
+        )
       : console.log({ leftSpeed, rightSpeed, important });
   };
 

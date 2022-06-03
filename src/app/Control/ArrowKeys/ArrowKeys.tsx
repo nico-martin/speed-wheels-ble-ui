@@ -23,8 +23,8 @@ const ArrowKeys = ({
     setActiveKey('F');
     interpolateWheelSpeed(
       'forward',
-      [1, 100],
-      [1, 100],
+      [50, 100],
+      [50, 100],
       12,
       4000,
       (left, right) => {
@@ -37,9 +37,9 @@ const ArrowKeys = ({
   const backward = () => {
     setActiveKey('B');
     interpolateWheelSpeed(
-      'forward',
-      [-1, -50],
-      [-1, -50],
+      'backward',
+      [-50, -100],
+      [-50, -100],
       12,
       4000,
       (left, right) => {
@@ -51,32 +51,18 @@ const ArrowKeys = ({
 
   const left = () => {
     setActiveKey('L');
-    interpolateWheelSpeed(
-      'forward',
-      [0, 0],
-      [5, 60],
-      6,
-      4000,
-      (left, right) => {
-        onCmdLeft(left);
-        onCmdRight(right);
-      }
-    );
+    interpolateWheelSpeed('left', [0, 0], [5, 60], 6, 4000, (left, right) => {
+      onCmdLeft(left);
+      onCmdRight(right);
+    });
   };
 
   const right = () => {
     setActiveKey('R');
-    interpolateWheelSpeed(
-      'forward',
-      [5, 60],
-      [0, 0],
-      6,
-      4000,
-      (left, right) => {
-        onCmdLeft(left);
-        onCmdRight(right);
-      }
-    );
+    interpolateWheelSpeed('right', [5, 60], [0, 0], 6, 4000, (left, right) => {
+      onCmdLeft(left);
+      onCmdRight(right);
+    });
   };
 
   const stop = () => {
