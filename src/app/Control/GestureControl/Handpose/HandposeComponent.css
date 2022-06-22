@@ -1,0 +1,63 @@
+.root {
+}
+
+.window {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  min-width: 100%;
+  min-height: 100%;
+}
+
+.artboard {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translateX(-50%) translateY(-50%);
+}
+
+.video {
+  position: relative;
+}
+
+.canvas {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 10;
+}
+
+.loader {
+  font-size: 3vmin;
+}
+
+.cameraSelectorButton {
+  font-size: 1.5rem;
+  position: fixed;
+  right: var(--spacing);
+  bottom: 5rem;
+  z-index: 100;
+  opacity: 0.5;
+  cursor: pointer;
+
+  &:hover {
+    opacity: 1;
+  }
+}
+
+.cameraSelectorSourceButton {
+  display: block;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+
+  & + .cameraSelectorSourceButton {
+    margin-top: 0.7em;
+    padding-top: 0.5em;
+    border-top: 1px solid var(--c-border);
+  }
+}
+
+.cameraSelectorSourceButtonActive {
+  font-weight: bold;
+}

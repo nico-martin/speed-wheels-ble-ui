@@ -20,12 +20,12 @@ description.addCurl(Finger.Middle, FingerCurl.HalfCurl, 0.5);
 description.addCurl(Finger.Middle, FingerCurl.FullCurl, 0.5);
 
 // ring:
-description.addCurl(Finger.Ring, FingerCurl.HalfCurl, 0.5);
-description.addCurl(Finger.Ring, FingerCurl.FullCurl, 0.5);
+description.addCurl(Finger.Ring, FingerCurl.HalfCurl, 1.0);
+description.addCurl(Finger.Ring, FingerCurl.FullCurl, 1.0);
 
 // pinky:
-description.addCurl(Finger.Pinky, FingerCurl.NoCurl, 1.0);
-description.addDirection(Finger.Pinky, FingerDirection.VerticalUp, 1.0);
+description.addCurl(Finger.Pinky, FingerCurl.NoCurl, 0.5);
+description.addDirection(Finger.Pinky, FingerDirection.VerticalUp, 0.5);
 //description.addDirection(Finger.Pinky, FingerDirection.DiagonalUpRight, 0.75);
 
 // give additional weight to index and ring fingers

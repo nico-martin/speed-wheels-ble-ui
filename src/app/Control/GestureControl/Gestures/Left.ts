@@ -9,8 +9,8 @@ const description = new GestureDescription('left');
 
 // thumb:
 description.addCurl(Finger.Thumb, FingerCurl.NoCurl, 1);
-description.addDirection(Finger.Thumb, FingerDirection.VerticalUp, 1.0);
-description.addDirection(Finger.Thumb, FingerDirection.DiagonalUpLeft, 1.0);
+description.addDirection(Finger.Thumb, FingerDirection.HorizontalRight, 1.0);
+description.addDirection(Finger.Thumb, FingerDirection.DiagonalUpRight, 1.0);
 
 // index:
 description.addCurl(Finger.Index, FingerCurl.HalfCurl, 0.5);
